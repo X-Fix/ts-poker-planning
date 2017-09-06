@@ -1,1 +1,1 @@
-web: npm run build-production && node index.js
+web: node index.js
