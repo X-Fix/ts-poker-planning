@@ -14,7 +14,7 @@
     "css-watch": "onchange \"client/css/*.css\" -i -- cleancss -o public/style.css client/css/*.css",
     "html-production": "rplcr client/html/index.html -f \"<rplcr-production-level>\" -t \".min\" -o public/index.html",
     "html-watch": "onchange \"client/html/index.html\" -i -- rplcr client/html/index.html -f \"<rplcr-production-level>\" -t \"\" -o public/index.html",
-    "js-production": "browserify client/js/app.js -t babelify --verbose --debug --poll | uglifyjs --screw-ie8 -c=dead_code,evaluate,loops,unused -m > public/build.min.js && echo 'built'",
+    "js-production": "NODE_ENV=production browserify client/js/app.js -t babelify --verbose --debug --poll | uglifyjs --screw-ie8 -c=dead_code,evaluate,loops,unused -m > public/build.min.js && echo 'built'",
     "js-watch": "watchify client/js/app.js --poll -v -t babelify -o public/build.js",
     "nodemon": "nodemon index.js --watch server",
     "update": "npm run build-production && git add . && git commit -m 'production build' && git push heroku master",
