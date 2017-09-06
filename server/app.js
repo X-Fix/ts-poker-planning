@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const path = require("path");
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const express = require("express");
 const app = express();
 const router = express.Router();
@@ -9,6 +10,7 @@ const roomManager = require("./roomManager");
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(compression());
 
 router.get("/", function(req, res) {
     res.sendFile(path.join(__dirname, "../public/index.html"));

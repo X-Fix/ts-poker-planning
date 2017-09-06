@@ -106,7 +106,6 @@ io.on("connection", function(socket) {
 		if (_.isEmpty(participant)) return;
 
 		participant.itemScore = data.itemScore;
-		console.log(participant);
 		room.item.isLocked = allParticipantsDone(room);
 
 		console.log(participant.name + " (" + socket.conn.id + ") set their item value (" + room.item.name + " - " + data.itemScore + ") for room [" + data.roomName+"]");
