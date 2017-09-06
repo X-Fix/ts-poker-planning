@@ -7,10 +7,10 @@ const app = express();
 const router = express.Router();
 const roomManager = require("./roomManager");
 
+app.use(compression());
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(compression());
 
 router.get("/", function(req, res) {
     res.sendFile(path.join(__dirname, "../public/index.html"));
