@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build-production": "npm run css-production && npm run html-production && npm run js-production",
-    "css-production": "cleancss -O2 -o public/style.min.css client/css/*.css && echo 'styled'",
+    "css-production": "cleancss --skip-rebase -O2 -o public/style.min.css client/css/*.css && echo 'styled'",
     "css-watch": "onchange \"client/css/*.css\" -i -- cleancss --skip-rebase -o public/style.css client/css/*.css",
     "html-production": "rplcr client/html/index.html -f \"<rplcr-production-level>\" -t \".min\" -o public/index.html",
     "html-watch": "onchange \"client/html/index.html\" -i -- rplcr client/html/index.html -f \"<rplcr-production-level>\" -t \"\" -o public/index.html",
