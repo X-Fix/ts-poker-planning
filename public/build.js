@@ -60,11 +60,7 @@ exports.default = {
 	joinRoomResponse: function joinRoomResponse(response) {
 		_reducers.store.dispatch({
 			type: "JOIN_ROOM",
-			payload: {
-				participantName: response.req._data.participantName,
-				room: response.body.room,
-				timestamp: response.body.timestamp
-			}
+			payload: response.body
 		});
 		window.location = "/#/PokerRoom";
 	},
@@ -93,6 +89,16 @@ exports.default = {
 				timestamp: data.timestamp
 			}
 		});
+	},
+
+	error: function error(data) {
+		console.log(data);
+		if (data.type > 1) {
+			console.log(data.type, data.status, data.message);
+			alert("Bug found, please screenshot the console message and send to cameron@travelstart.com");
+		} else {
+			alert(data.message);
+		}
 	}
 };
 
@@ -183,6 +189,8 @@ var _lodash = require('lodash');
 
 var _actions = require('../actions');
 
+var _constants = require('../utilities/constants');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -202,12 +210,8 @@ var mapStateToProps = function mapStateToProps(_ref) {
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	return {
-		createRoom: function createRoom(object) {
-			_actions.apiRequests.createRoom(object);
-		},
-		joinRoom: function joinRoom(object) {
-			_actions.apiRequests.joinRoom(object);
-		}
+		createRoom: _actions.apiRequests.createRoom,
+		joinRoom: _actions.apiRequests.joinRoom
 	};
 };
 
@@ -220,6 +224,7 @@ var JoinRoom = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (JoinRoom.__proto__ || Object.getPrototypeOf(JoinRoom)).call(this, props));
 
 		_this.joinRoom = _this.joinRoom.bind(_this);
+		_this.createRoom = _this.createRoom.bind(_this);
 		return _this;
 	}
 
@@ -235,21 +240,43 @@ var JoinRoom = function (_React$Component) {
 		}
 	}, {
 		key: 'joinRoom',
-		value: function joinRoom(event) {
+		value: function joinRoom() {
 			var participantName = this.refs.txtParticipantName.value,
-			    roomName = this.refs.txtRoomName.value,
-			    method = event ? event.target.dataset.method : "joinRoom";
+			    roomName = this.refs.txtRoomName.value;
 
 			if ((0, _lodash.isEmpty)(participantName) || (0, _lodash.isEmpty)(roomName)) return;
 
-			this.props[method]({
+			this.props.joinRoom({
 				participantName: participantName,
 				roomName: roomName
 			});
 		}
 	}, {
+		key: 'createRoom',
+		value: function createRoom() {
+			var participantName = this.refs.txtParticipantName.value.trim(),
+			    roomName = this.refs.txtRoomName.value.trim(),
+			    cardType = this.refs.ddCardType.value;
+
+			if ((0, _lodash.isEmpty)(participantName) || (0, _lodash.isEmpty)(roomName)) return;
+
+			this.props.createRoom({
+				participantName: participantName,
+				roomName: roomName,
+				cardType: cardType
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var cardTypeOptions = (0, _lodash.map)((0, _lodash.keys)(_constants.CARDS), function (cardType, index) {
+				return _react2.default.createElement(
+					'option',
+					{ key: index, value: cardType },
+					cardType
+				);
+			});
+
 			return _react2.default.createElement(
 				'div',
 				{ className: 'join-room-container' },
@@ -257,13 +284,23 @@ var JoinRoom = function (_React$Component) {
 				_react2.default.createElement('input', { className: 'txt room-name', ref: 'txtRoomName', type: 'text', placeholder: 'Room name', label: 'Room name', tabIndex: '2' }),
 				_react2.default.createElement(
 					'div',
-					{ className: 'btn join-room', tabIndex: '3', onClick: this.joinRoom, 'data-method': 'joinRoom' },
+					{ className: 'btn join-room', tabIndex: '3', onClick: this.joinRoom },
 					'Join Room'
 				),
 				_react2.default.createElement(
 					'div',
-					{ className: 'btn create-room', tabIndex: '4', onClick: this.joinRoom, 'data-method': 'createRoom' },
+					{ className: 'btn create-room', tabIndex: '4', onClick: this.createRoom },
 					'Create Room'
+				),
+				_react2.default.createElement(
+					'label',
+					{ className: 'lbl card-type', htmlFor: 'ddCardType' },
+					'Card Type:'
+				),
+				_react2.default.createElement(
+					'select',
+					{ className: 'dd card-type', ref: 'ddCardType', name: 'ddCardType' },
+					cardTypeOptions
 				)
 			);
 		}
@@ -274,7 +311,7 @@ var JoinRoom = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(JoinRoom);
 
-},{"../actions":3,"lodash":82,"react":261,"react-redux":230}],6:[function(require,module,exports){
+},{"../actions":3,"../utilities/constants":14,"lodash":82,"react":261,"react-redux":230}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -307,12 +344,9 @@ var mapStateToProps = function mapStateToProps(_ref) {
 	var participant = _ref.participant,
 	    room = _ref.room;
 
-	var partic = (0, _lodash.find)(room.participants, { name: participant.name });
-	var itemScore = partic.itemScore;
 	return {
 		participant: participant,
-		room: room,
-		itemScore: itemScore
+		room: room
 	};
 };
 
@@ -326,8 +360,20 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 				payload: object
 			});
 		},
-		setItemScore: _actions.apiRequests.setItemScore,
-		kickParticipant: _actions.apiRequests.kickParticipant
+		setItemScore: function setItemScore(object) {
+			_actions.apiRequests.setItemScore(object);
+			dispatch({
+				type: "SET_ITEM_SCORE",
+				payload: object
+			});
+		},
+		kickParticipant: function kickParticipant(object) {
+			_actions.apiRequests.kickParticipant(object);
+			dispatch({
+				type: "KICK_PARTICIPANT",
+				payload: object
+			});
+		}
 	};
 };
 
@@ -351,8 +397,8 @@ var PokerRoom = function (_React$Component) {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
 			this.props.subscribe({
-				roomName: this.props.room.name,
-				participantName: this.props.participant.name
+				roomId: this.props.room.id,
+				participantId: this.props.participant.id
 			});
 
 			if ((0, _lodash.isEmpty)(this.refs.txtItemName)) return;
@@ -383,11 +429,11 @@ var PokerRoom = function (_React$Component) {
 		value: function createItem() {
 			var itemName = this.refs.txtItemName.value;
 
-			if (!(0, _lodash.isEqual)(this.props.participant.name, this.props.room.owner)) return;
+			if (!(0, _lodash.isEqual)(this.props.participant.id, this.props.room.ownerId) || (0, _lodash.isEmpty)(itemName)) return;
 
 			this.props.createItem({
-				roomName: this.props.room.name,
-				participantName: this.props.participant.name,
+				roomId: this.props.room.id,
+				participantId: this.props.participant.id,
 				itemName: itemName
 			});
 		}
@@ -399,31 +445,31 @@ var PokerRoom = function (_React$Component) {
 			if (itemScore === this.props.itemScore) itemScore = null;
 
 			this.props.setItemScore({
-				roomName: this.props.room.name,
-				participantName: this.props.participant.name,
+				roomId: this.props.room.id,
+				participantId: this.props.participant.id,
 				itemScore: itemScore
 			});
 		}
 	}, {
 		key: 'kickParticipant',
 		value: function kickParticipant(event) {
-			var kickedParticipant = event.target.dataset.value;
+			var targetId = event.target.dataset.value;
 
-			if (!(0, _lodash.isEqual)(this.props.room.owner, this.props.participant.name)) return;
+			if (!(0, _lodash.isEqual)(this.props.room.ownerId, this.props.participant.id)) return;
 
 			this.props.kickParticipant({
-				roomName: this.props.room.name,
-				participantName: this.props.participant.name,
-				kickedParticipant: kickedParticipant
+				roomId: this.props.room.id,
+				participantId: this.props.participant.id,
+				targetId: targetId
 			});
 		}
 	}, {
 		key: 'makeCardComponent',
 		value: function makeCardComponent(cardScore, index) {
 			var className = "poker-card";
-			var disabled = (0, _lodash.isEmpty)(this.props.room.item) || this.props.room.item.isLocked;
+			var disabled = (0, _lodash.isEmpty)(this.props.room.item.name) || this.props.room.item.isLocked;
 
-			if (this.props.itemScore === cardScore) {
+			if (this.props.participant.itemScore === cardScore) {
 				className += " selected";
 			}
 			if (disabled) {
@@ -439,12 +485,22 @@ var PokerRoom = function (_React$Component) {
 	}, {
 		key: 'makeParticipantComponent',
 		value: function makeParticipantComponent(participant, index) {
-			var canKick = (0, _lodash.isEqual)(this.props.participant.name, this.props.room.owner) && !(0, _lodash.isEqual)(participant.name, this.props.room.owner) && !(0, _lodash.isEqual)(participant.name, this.props.participant.name);
-			var showScore = !(0, _lodash.isEmpty)(participant.itemScore) && this.props.room.item.isLocked;
+			var thisIsOwner = (0, _lodash.isEqual)(participant.id, this.props.room.ownerId);
+			var thisIsMe = (0, _lodash.isEqual)(participant.id, this.props.participant.id);
+			var iAmOwner = (0, _lodash.isEqual)(this.props.participant.id, this.props.room.ownerId);
+			var canKick = iAmOwner && !thisIsOwner;
+			var hasScore = !(0, _lodash.isEmpty)(participant.itemScore);
+			var showScore = hasScore && this.props.room.item.isLocked;
 
 			return _react2.default.createElement(
 				'div',
 				{ key: index, className: 'participant-card' },
+				_react2.default.createElement(
+					'div',
+					{ className: 'participant-card__participant-icons' },
+					thisIsOwner ? _react2.default.createElement('span', { className: 'glyph tower' }) : null,
+					thisIsMe ? _react2.default.createElement('span', { className: 'glyph chevron-right' }) : null
+				),
 				_react2.default.createElement(
 					'div',
 					{ className: 'participant-card__name' },
@@ -452,24 +508,29 @@ var PokerRoom = function (_React$Component) {
 				),
 				canKick ? _react2.default.createElement(
 					'div',
-					{ className: 'btn kick-participant', 'data-value': participant.name, onClick: this.kickParticipant },
+					{ className: 'btn kick-participant', 'data-value': participant.id, onClick: this.kickParticipant },
 					'Kick'
 				) : null,
 				showScore ? _react2.default.createElement(
 					'div',
 					{ className: 'participant-card__item-score' },
 					participant.itemScore
+				) : hasScore ? _react2.default.createElement(
+					'div',
+					{ className: 'participant-card__item-icons' },
+					_react2.default.createElement('span', { className: 'glyph ok' })
 				) : null
 			);
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var cardComponents = (0, _lodash.map)(_constants.CARDS, this.makeCardComponent);
+
+			var cardComponents = (0, _lodash.map)(_constants.CARDS[this.props.room.cardType], this.makeCardComponent);
 			var participantComponents = (0, _lodash.map)(this.props.room.participants, this.makeParticipantComponent);
-			var isOwner = (0, _lodash.isEqual)(this.props.participant.name, this.props.room.owner);
-			var itemEmpty = (0, _lodash.isEmpty)(this.props.room.item);
-			var itemLocked = itemEmpty ? false : this.props.room.item.isLocked;
+			var isOwner = (0, _lodash.isEqual)(this.props.participant.id, this.props.room.ownerId);
+			var itemEmpty = (0, _lodash.isEmpty)(this.props.room.item.name);
+			var itemLocked = itemEmpty ? true : this.props.room.item.isLocked;
 
 			return _react2.default.createElement(
 				'div',
@@ -650,9 +711,7 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
-var init = {
-	name: null
-};
+var init = {};
 
 var lastTimestamp = 0;
 
@@ -667,24 +726,19 @@ var participant = function participant() {
 
 	switch (type) {
 		case "CREATE_ROOM":
-			return {
-				name: payload.room.owner
-			};
+			return payload.participant;
 		case "JOIN_ROOM":
-			return {
-				name: payload.participantName
-			};
+			return payload.participant;
 		case "LEAVE_ROOM":
-			return {
-				name: null
-			};
+			return init;
+		case "SET_ITEM_SCORE":
+			return (0, _lodash.assign)({}, state, { itemScore: payload.itemScore });
 		case "SYNC_ROOM":
-			if ((0, _lodash.isEmpty)((0, _lodash.find)(payload.room.participants, { name: state.name }))) {
-				return {
-					name: null
-				};
-			} else {
-				return state;
+			var _participant = (0, _lodash.find)(payload.room.participants, { id: state.id });
+			if ((0, _lodash.isEmpty)(_participant)) {
+				return init;
+			} else if (!(0, _lodash.isEqual)(_participant, state)) {
+				return _participant;
 			}
 		default:
 			return state;
@@ -741,6 +795,8 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var init = {
 	id: null,
 	name: null,
@@ -758,6 +814,15 @@ var init = {
 
 var lastTimestamp = 0;
 
+function allParticipantsDone(room) {
+	for (var i = 0; i < room.participants.length; i++) {
+		if (room.participants[i].itemScore === null) {
+			return false;
+		}
+	}
+	return true;
+}
+
 var room = function room() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
 	var _ref = arguments[1];
@@ -771,15 +836,24 @@ var room = function room() {
 		case "CREATE_ROOM":
 		case "JOIN_ROOM":
 		case "SYNC_ROOM":
+			console.log(payload.room);
 			return payload.room;
-		case "SET_ITEM_VALUE":
-			var newParticipants = (0, _lodash.cloneDeep)(state.participants);
+		case "SET_ITEM_SCORE":
 
-			var participant = (0, _lodash.find)(newParticipants, { name: payload.participantName });
+			var oldParticipant = (0, _lodash.find)(state.participants, { id: payload.participantId });
+			var newParticipant = (0, _lodash.assign)({}, oldParticipant, { itemScore: payload.itemScore });
 
-			participant.itemScore = payload.itemScore;
+			var filteredParticipants = (0, _lodash.filter)(state.participants, function (participant) {
+				return !(0, _lodash.isEqual)(participant.id, oldParticipant.id);
+			});
 
-			return (0, _lodash.assign)({}, state, { participants: newParticipants });
+			var newProps = { participants: [].concat(_toConsumableArray(filteredParticipants), [newParticipant]) };
+
+			if (allParticipantsDone(newProps)) {
+				newProps.item = (0, _lodash.assign)({}, state.item, { isLocked: true });
+			};
+
+			return (0, _lodash.assign)({}, state, newProps);
 
 		default:
 			return state;
@@ -851,7 +925,6 @@ exports.default = {
 
 	makeSocketRequest: function makeSocketRequest(requestName, requestObject) {
 		var socket = getSocket();
-
 		socket.emit(requestName, requestObject);
 	}
 
@@ -869,7 +942,10 @@ var API_ENDPOINTS = {
 	leaveRoom: '/leaveRoom'
 };
 
-var CARDS = ["1", "2", "3", "5", "8", "13", "21"];
+var CARDS = {
+	fibonacci: ["?", "1", "2", "3", "5", "8", "13", "21"],
+	consecutive: ["?", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
+};
 
 var ERROR_MESSAGES = {
 	createRoom: {
