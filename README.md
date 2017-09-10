@@ -53,17 +53,9 @@ npm run build-production
 ```
 before publishing to production server
 
-## Built With
+## Roadmap
 
-* NPM
-
-## Contributing
-
-Let's get to that later
-
-## Versioning
-
-This too...
+Will update this once I find the piece of paper I wrote it on
 
 ## Authors
 
@@ -77,4 +69,4 @@ ALL YOUR IP ARE BELONG TO TRAVELSTART
 
 * Thanks to that X-Fix guy for letting me copy code from his past projects
 * Bosses for the enthusiasm
-* etc
+* Ash and Henré for initial feedback and suggestions
