@@ -4,7 +4,7 @@ const HTTP_STATUS = require('../utilities/constants').HTTP_STATUS;
 const ERRORS = require('../utilities//constants').ERRORS;
 
 function syncRoom(io, room) {
-	console.log("["+room.name + "] synced");
+	console.log("[" + room.name + "] synced");
 	io.to(room.id).emit("sync", {room: room, timestamp: Date.now()});
 }
 
@@ -48,24 +48,19 @@ const socketRoutes = {
     	dbi.checkInRoom(roomId);
 	},
 
-	createItem: function({ roomId, participantId, itemName }, socket, io) {
+	createItem: function({ roomId, participantId, item }, socket, io) {
 		const room = dbi.checkOutRoom(roomId);
 		checkParticipantIsRoomOwner(participantId, room);
 
-		room.item = {
-			name: itemName,
-			isLocked: false,
-			created: Date.now()
-		}
+		room.item = item;
 
 		_.forEach(room.participants, (participant) => {
 			participant.itemScore = null;
 		});
 
-		console.log(participantId + " (" + socket.conn.id + ") created a new item (" + itemName + ") for room [" + roomId +"]");
+		console.log(participantId + " (" + socket.conn.id + ") created a new item (" + item.name + ") for room [" + roomId +"]");
 
 		syncRoom(io, room);
-		console.log(room);
 		dbi.checkInRoom(roomId);
 	},
 
@@ -90,6 +85,7 @@ const socketRoutes = {
 		checkParticipantIsRoomOwner(participantId, room);
 
 		if (_.isEqual(targetId, room.ownerId)) {
+			dbi.checkInRoom(roomId);
 			throw {
 	            type: ERRORS.CLIENT_ERROR,
 	            message: "Kick target cannot be room owner",

@@ -160,6 +160,7 @@ function dispatchNavigate() {
 		}
 	});
 }
+
 // Add dispatch to hash change and onload event
 window.onhashchange = dispatchNavigate;
 window.onload = dispatchNavigate;
@@ -340,6 +341,21 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var Item = function Item(itemName) {
+	return {
+		name: itemName,
+		isLocked: false,
+		dateCreated: Date.now()
+	};
+};
+
+var onEnter = function onEnter(event, fn) {
+	if (event.keyCode === 13) {
+		event.preventDefault();
+		fn();
+	}
+};
+
 var mapStateToProps = function mapStateToProps(_ref) {
 	var participant = _ref.participant,
 	    room = _ref.room;
@@ -356,7 +372,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 		createItem: function createItem(object) {
 			_actions.apiRequests.createItem(object);
 			dispatch({
-				type: "SET_ITEM_VALUE",
+				type: "CREATE_ITEM",
 				payload: object
 			});
 		},
@@ -385,7 +401,7 @@ var PokerRoom = function (_React$Component) {
 
 		var _this = _possibleConstructorReturn(this, (PokerRoom.__proto__ || Object.getPrototypeOf(PokerRoom)).call(this, props));
 
-		_this.selectCard = _this.selectCard.bind(_this);
+		_this.setItemScore = _this.setItemScore.bind(_this);
 		_this.createItem = _this.createItem.bind(_this);
 		_this.kickParticipant = _this.kickParticipant.bind(_this);
 		_this.makeCardComponent = _this.makeCardComponent.bind(_this);
@@ -396,6 +412,8 @@ var PokerRoom = function (_React$Component) {
 	_createClass(PokerRoom, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			var _this2 = this;
+
 			this.props.subscribe({
 				roomId: this.props.room.id,
 				participantId: this.props.participant.id
@@ -404,45 +422,61 @@ var PokerRoom = function (_React$Component) {
 			if ((0, _lodash.isEmpty)(this.refs.txtItemName)) return;
 
 			this.refs.txtItemName.addEventListener('keyup', function (event) {
-				if (event.keyCode === 13) {
-					event.preventDefault();
-					this.createItem();
-				}
-			}.bind(this));
-		}
-	}, {
-		key: 'componentDidUpdate',
-		value: function componentDidUpdate() {
-			if ((0, _lodash.isEmpty)(this.refs.txtItemName)) return;
-
-			this.refs.txtItemName.addEventListener('keyup', function (event) {
-				if (event.keyCode === 13) {
-					event.preventDefault();
-					this.createItem();
-				}
-			}.bind(this));
-
+				onEnter(event, _this2.createItem);
+			});
 			this.refs.txtItemName.focus();
 		}
 	}, {
+		key: 'shouldComponentUpdate',
+		value: function shouldComponentUpdate(nextProps) {
+			// Only update if properties have changed
+			// Normally use '===' comparison but updates could be sync from server
+			if (!(0, _lodash.isEqual)(this.props.room, nextProps.room) || !(0, _lodash.isEqual)(this.props.participant, nextProps.participant)) {
+				return true;
+			}
+			return false;
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate(prevProps) {
+			var _this3 = this;
+
+			// Attach event handlers to elements that may not have existed in previous render
+			if ((0, _lodash.isEmpty)(this.refs.txtItemName)) return;
+
+			// Only attach event handlers if elements are freshly rendered (avoid duplicate events)
+			if (!prevProps.room.item.isLocked && this.props.room.item.isLocked) {
+				this.refs.txtItemName.addEventListener('keyup', function (event) {
+					onEnter(event, _this3.createItem);
+				});
+			}
+		}
+
+		// Create new item to be pokered
+		// Event only accessible to room owner
+
+	}, {
 		key: 'createItem',
 		value: function createItem() {
-			var itemName = this.refs.txtItemName.value;
+			var itemName = this.refs.txtItemName.value.trim();
 
 			if (!(0, _lodash.isEqual)(this.props.participant.id, this.props.room.ownerId) || (0, _lodash.isEmpty)(itemName)) return;
 
 			this.props.createItem({
 				roomId: this.props.room.id,
 				participantId: this.props.participant.id,
-				itemName: itemName
+				item: new Item(itemName)
 			});
 		}
+
+		// Set this participant's score for current item
+
 	}, {
-		key: 'selectCard',
-		value: function selectCard(event) {
+		key: 'setItemScore',
+		value: function setItemScore(event) {
 			var itemScore = event.target.dataset.value;
 
-			if (itemScore === this.props.itemScore) itemScore = null;
+			if (itemScore === this.props.participant.itemScore) itemScore = null;
 
 			this.props.setItemScore({
 				roomId: this.props.room.id,
@@ -450,6 +484,10 @@ var PokerRoom = function (_React$Component) {
 				itemScore: itemScore
 			});
 		}
+
+		// Remove target participant from room
+		// Event only accessible to room owner
+
 	}, {
 		key: 'kickParticipant',
 		value: function kickParticipant(event) {
@@ -463,6 +501,10 @@ var PokerRoom = function (_React$Component) {
 				targetId: targetId
 			});
 		}
+
+		// Generates poker card component for the provided card score
+		// Can be abstracted to a separate functional component
+
 	}, {
 		key: 'makeCardComponent',
 		value: function makeCardComponent(cardScore, index) {
@@ -478,13 +520,19 @@ var PokerRoom = function (_React$Component) {
 
 			return _react2.default.createElement(
 				'div',
-				{ key: index, className: className, onClick: disabled ? null : this.selectCard, 'data-value': cardScore },
+				{ key: index, className: className, onClick: disabled ? null : this.setItemScore, 'data-value': cardScore },
 				cardScore
 			);
 		}
+
+		// Generates participant card component for the provided participant
+		// Can be abstracted to a separate functional component
+
 	}, {
 		key: 'makeParticipantComponent',
 		value: function makeParticipantComponent(participant, index) {
+
+			// Various boolean values used to determine wether to show relevant element or not
 			var thisIsOwner = (0, _lodash.isEqual)(participant.id, this.props.room.ownerId);
 			var thisIsMe = (0, _lodash.isEqual)(participant.id, this.props.participant.id);
 			var iAmOwner = (0, _lodash.isEqual)(this.props.participant.id, this.props.room.ownerId);
@@ -522,12 +570,21 @@ var PokerRoom = function (_React$Component) {
 				) : null
 			);
 		}
+
+		// Renders the html for the entire 'Poker Room' page
+		// Dependencies = [cardComponent, participantComponent]
+
 	}, {
 		key: 'render',
 		value: function render() {
 
+			// Card components generated from a list of values in the selected CARDS constant
+			// CARDS constant selected using same value selected when creating the room
 			var cardComponents = (0, _lodash.map)(_constants.CARDS[this.props.room.cardType], this.makeCardComponent);
+			// Participant components generated from the list of participants subscribed to the room
 			var participantComponents = (0, _lodash.map)(this.props.room.participants, this.makeParticipantComponent);
+
+			// Various boolean values used to determine wether to show relevant element or not
 			var isOwner = (0, _lodash.isEqual)(this.props.participant.id, this.props.room.ownerId);
 			var itemEmpty = (0, _lodash.isEmpty)(this.props.room.item.name);
 			var itemLocked = itemEmpty ? true : this.props.room.item.isLocked;
@@ -608,14 +665,27 @@ var mapStateToProps = function mapStateToProps(_ref) {
 		page: page,
 		participant: participant
 	};
-};
+}; /**
+    * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the 
+    * end of the URL so it can link to your browser history correctly or something I've never needed to use.
+    * So I threw it out 3 projects ago and now I use my own version.
+    * 
+    * It takes a string value for the current page from a reducer that updates when the window.hash changes
+    * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as 
+    * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
+    *
+    * It also doubles up as a bouncer for apps that require login of sorts (like this one)
+    * Just subscribe it to whichever reducer tracks your logged-on status ('participant' in this case) and redirect
+    * as necessary when that status changes
+    */
+
 
 var Router = function Router(_ref2) {
 	var page = _ref2.page,
 	    participant = _ref2.participant;
 
 
-	if ((0, _lodash.isEmpty)(participant.name)) {
+	if ((0, _lodash.isEmpty)(participant.id)) {
 		if (!(0, _lodash.isEqual)(page, "JoinRoom")) {
 			window.location = "/#/JoinRoom";
 		}
@@ -731,6 +801,8 @@ var participant = function participant() {
 			return payload.participant;
 		case "LEAVE_ROOM":
 			return init;
+		case "CREATE_ITEM":
+			return (0, _lodash.assign)({}, state, { itemScore: null });
 		case "SET_ITEM_SCORE":
 			return (0, _lodash.assign)({}, state, { itemScore: payload.itemScore });
 		case "SYNC_ROOM":
@@ -795,21 +867,17 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 var init = {
 	id: null,
 	name: null,
-	owner: null,
-	timestamp: 0,
+	ownerId: null,
+	cardType: null,
 	item: {
 		name: null,
-		isLocked: false
+		isLocked: false,
+		dateCreated: 0
 	},
-	participants: [{
-		name: null,
-		score: null
-	}]
+	participants: []
 };
 
 var lastTimestamp = 0;
@@ -832,26 +900,41 @@ var room = function room() {
 
 	if (payload !== undefined && payload.timestamp !== undefined && lastTimestamp > payload.timestamp) return state;
 
+	var newProps = {};
+
 	switch (type) {
 		case "CREATE_ROOM":
 		case "JOIN_ROOM":
 		case "SYNC_ROOM":
-			console.log(payload.room);
 			return payload.room;
+		case "CREATE_ITEM":
+
+			newProps.participants = (0, _lodash.map)(state.participants, function (participant) {
+				return (0, _lodash.assign)({}, participant, { itemScore: null });
+			});
+			newProps.item = payload.item;
+
+			return (0, _lodash.assign)({}, state, newProps);
+
 		case "SET_ITEM_SCORE":
 
-			var oldParticipant = (0, _lodash.find)(state.participants, { id: payload.participantId });
-			var newParticipant = (0, _lodash.assign)({}, oldParticipant, { itemScore: payload.itemScore });
+			newProps.participants = (0, _lodash.map)(state.participants, function (participant) {
+				if (!(0, _lodash.isEqual)(participant.id, payload.participantId)) return participant;
 
-			var filteredParticipants = (0, _lodash.filter)(state.participants, function (participant) {
-				return !(0, _lodash.isEqual)(participant.id, oldParticipant.id);
+				return (0, _lodash.assign)({}, participant, { itemScore: payload.itemScore });
 			});
-
-			var newProps = { participants: [].concat(_toConsumableArray(filteredParticipants), [newParticipant]) };
 
 			if (allParticipantsDone(newProps)) {
 				newProps.item = (0, _lodash.assign)({}, state.item, { isLocked: true });
 			};
+
+			return (0, _lodash.assign)({}, state, newProps);
+
+		case "KICK_PARTICIPANT":
+
+			newProps.participants = (0, _lodash.filter)(state.participants, function (participant) {
+				return !(0, _lodash.isEqual)(participant.id, payload.targetId);
+			});
 
 			return (0, _lodash.assign)({}, state, newProps);
 

@@ -7,13 +7,13 @@ function Room(roomName, cardType) {
 	return {
         id: shortid.generate(),
         name: roomName,
-        ownerIdId: null,
+        ownerId: null,
         isLocked: true,
         cardType: cardType,
         item: {
             name: null,
-            created: null,
-            isLocked: false
+            isLocked: false,
+            dateCreated: Date.now()
         },
         participants: [],
         allParticipantsDone: function() {
@@ -81,6 +81,17 @@ const expressRoutes = {
 		}
 
 		let room = dbi.checkOutRoom(roomId);
+
+		_.forEach(room.participants, (participant) => {
+			if (_.isEqual(participant.name.toLowerCase(), participantName.toLowerCase())) {
+				dbi.checkInRoom(roomId);
+				throw {
+					type: "STATUS",
+					message: "A participant with that name already exists in this room",
+					status: HTTP_STATUS.CONFLICT
+				};
+			}
+		});
 		
 		const newParticipant = new Participant(participantName);
 		room.participants.push(newParticipant);
