@@ -1,6 +1,6 @@
 {
   "name": "poker-planning-server",
-  "version": "0.0.1",
+  "version": "2.1.2",
   "description": "Poker planning",
   "main": "index.js",
   "babel": {

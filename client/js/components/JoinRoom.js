@@ -36,6 +36,8 @@ class JoinRoom extends React.Component {
 		}.bind(this));
 	}
 
+	// Join an existing poker room matching the given name
+	// A participant is created with the given name
 	joinRoom() {
 		const participantName = this.refs.txtParticipantName.value,
 			roomName = this.refs.txtRoomName.value;
@@ -48,6 +50,8 @@ class JoinRoom extends React.Component {
 		});
 	}
 
+	// Create a new poker room with the givent name
+	// Automatically joins room after creating a participant with the given name
 	createRoom() {
 		const participantName = this.refs.txtParticipantName.value.trim(),
 			roomName = this.refs.txtRoomName.value.trim(),
@@ -62,7 +66,10 @@ class JoinRoom extends React.Component {
 		});
 	}
 	
+	// Renders the html for the entire 'Join Room' page
+	// Dependencies = none
 	render() {
+		// Populate the cardType drop down with options listed as keys in the CARDS constant
 		const cardTypeOptions = map(keys(CARDS), (cardType, index) =>{
 			return <option key={index} value={cardType}>{cardType}</option>;
 		});
