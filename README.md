@@ -36,7 +36,9 @@ npm run watch
 ```
 
 Should see a bunch of start up text ending with nodemon starting up and 'Listening on 3000'
-There are 4 watcher processes going on at this point; client html, client css, client js, and server js. If you get any errors try to just run it again OR add some timing space between the 4 watcher processes firing up ( see package.json > scripts > watch > "sleep 5s && ...")
+Open your (Chrome) browser and go to "http://localhost:3000", voilà! Anyone on the same network as you can also connect using "[your network IP address]:3000"
+
+There are 4 watcher processes running at this point (client html, client css, client js, and server js) and `concurrently` fires them all up simultaneously. This might shock your system so if you get any errors when starting up just try running it again OR add some timing space between the 4 watcher processes firing up (eg. package.json > scripts > watch > "sleep 5s && ...")
 
 In develop environment the express server doesn't cache static files so no need to restart the server if you update the client files but you will need to refresh the page. No hot-reloading yet (Sssshhhhh)
 
@@ -53,9 +55,17 @@ npm run build-production
 ```
 before publishing to production server
 
-## Roadmap
+## Roadmap/Todos
 
-Will update this once I find the piece of paper I wrote it on
+- [Feature] "Leave Room" button
+- Add leaveRoom to onWindowClose event handler
+- Add room name to Poker Room page
+- Formulate and implement a design scheme
+- Store details in session storage on login 
+- Encrypt socket connections
+- [Feature] Join room using shared URL
+- Handle dropped/prematurely closed connections
+- Control change in strategy (websocket/polling)
 
 ## Authors
 
