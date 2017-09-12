@@ -57,13 +57,13 @@ before publishing to production server
 
 ## Roadmap/Todos
 
+- [Feature] Join room using shared URL
 - [Feature] "Leave Room" button
 - Add leaveRoom to onWindowClose event handler
 - Add room name to Poker Room page
 - Formulate and implement a design scheme
 - Store details in session storage on login 
 - Encrypt socket connections
-- [Feature] Join room using shared URL
 - Handle dropped/prematurely closed connections
 - Control change in strategy (websocket/polling)
 
