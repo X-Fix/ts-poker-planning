@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0"/>
-    	
-		<script>
 window['_fs_debug'] = false;
 window['_fs_host'] = 'fullstory.com';
 window['_fs_org'] = '73DWB';
@@ -20,12 +13,3 @@ window['_fs_namespace'] = 'FS';
     d=n.domain;while(1){n.cookie='fs_uid=;domain='+d+
     ';path=/;expires='+new Date(0).toUTCString();i=d.indexOf('.');if(i<0)break;d=d.slice(i+1)}}};
 })(window,document,window['_fs_namespace'],'script','user');
-</script>
-		<link rel="stylesheet" href="style.min.css" type="text/css"/>
-		<title>Poker Planning</title>
-	</head>
-	<body>
-		<div style="width: 100%; height: 100%" id="root"></div>
-		<script src="build.min.js" type="application/javascript"></script>
-	</body>
-</html>

@@ -55,6 +55,18 @@ var _apiInterface2 = _interopRequireDefault(_apiInterface);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function identifyForFullstory(responseBody) {
+	if (!window.FS) return;
+	var participant = responseBody.participant,
+	    room = responseBody.room;
+
+	FS.identify(participant.id, {
+		displayName: participant.name,
+		roomName: room.name,
+		isOwner: room.ownerId === participant.id
+	});
+}
+
 exports.default = {
 
 	joinRoomResponse: function joinRoomResponse(response) {
@@ -63,6 +75,8 @@ exports.default = {
 			payload: response.body
 		});
 		window.location = "/#/PokerRoom";
+
+		identifyForFullstory(response.body);
 	},
 
 	joinRoomError: function joinRoomError(error, response, message) {
@@ -75,6 +89,8 @@ exports.default = {
 			payload: response.body
 		});
 		window.location = "/#/PokerRoom";
+
+		identifyForFullstory(response.body);
 	},
 
 	createRoomError: function createRoomError(error, response, message) {
@@ -151,6 +167,8 @@ var _Router2 = _interopRequireDefault(_Router);
 var _helperMethods = require('./utilities/helperMethods');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//import fullstory from './utilities/fullstory'
 
 function dispatchNavigate() {
 	_reducers.store.dispatch({
@@ -239,6 +257,10 @@ var JoinRoom = function (_React$Component) {
 				}
 			}.bind(this));
 		}
+
+		// Join an existing poker room matching the given name
+		// A participant is created with the given name
+
 	}, {
 		key: 'joinRoom',
 		value: function joinRoom() {
@@ -252,6 +274,10 @@ var JoinRoom = function (_React$Component) {
 				roomName: roomName
 			});
 		}
+
+		// Create a new poker room with the givent name
+		// Automatically joins room after creating a participant with the given name
+
 	}, {
 		key: 'createRoom',
 		value: function createRoom() {
@@ -267,9 +293,14 @@ var JoinRoom = function (_React$Component) {
 				cardType: cardType
 			});
 		}
+
+		// Renders the html for the entire 'Join Room' page
+		// Dependencies = none
+
 	}, {
 		key: 'render',
 		value: function render() {
+			// Populate the cardType drop down with options listed as keys in the CARDS constant
 			var cardTypeOptions = (0, _lodash.map)((0, _lodash.keys)(_constants.CARDS), function (cardType, index) {
 				return _react2.default.createElement(
 					'option',

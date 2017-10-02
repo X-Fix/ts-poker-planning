@@ -1,14 +1,26 @@
 import { store } from '../reducers';
 import apiInterface from '../utilities/apiInterface';
- 
+
+function identifyForFullstory(responseBody) {
+	if (!window.FS) return;
+	const { participant, room } = responseBody;
+	FS.identify(participant.id, {
+		displayName: participant.name,
+		roomName: room.name,
+		isOwner: room.ownerId === participant.id
+	});
+}
+
 export default {
-	
+
 	joinRoomResponse: function(response) {
 		store.dispatch({
 			type: "JOIN_ROOM",
 			payload: response.body
 		});
 		window.location = "/#/PokerRoom";
+
+		identifyForFullstory(response.body);
 	},
 
 	joinRoomError: function(error, response, message) {
@@ -21,6 +33,8 @@ export default {
 			payload: response.body
 		});
 		window.location = "/#/PokerRoom";
+
+		identifyForFullstory(response.body);
 	},
 
 	createRoomError: function(error, response, message) {

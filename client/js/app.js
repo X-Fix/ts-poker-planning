@@ -4,10 +4,11 @@ import { Provider } from 'react-redux';
 import { store } from './reducers';
 import Router from './components/Router';
 import { getCurrentRoute } from './utilities/helperMethods';
+//import fullstory from './utilities/fullstory'
 
 function dispatchNavigate() {
 	store.dispatch({
-		type: "NAVIGATE", 
+		type: "NAVIGATE",
 		payload: {
 			page: getCurrentRoute()
 		}
