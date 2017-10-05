@@ -5,7 +5,7 @@ import { apiRequests } from '../actions';
 import { CARDS } from '../utilities/constants';
 
 const mapStateToProps = ({ requests }) => {
-	return { 
+	return {
 		joinRoomRequest: requests.joinRoom,
 		createRoomRequest: requests.createRoom
 	}
@@ -65,7 +65,7 @@ class JoinRoom extends React.Component {
 			cardType
 		});
 	}
-	
+
 	// Renders the html for the entire 'Join Room' page
 	// Dependencies = none
 	render() {
@@ -87,7 +87,7 @@ class JoinRoom extends React.Component {
 			</div>
 		);
 	}
-	
+
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(JoinRoom);

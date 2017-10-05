@@ -16,6 +16,7 @@ function Room(roomName, cardType) {
             dateCreated: Date.now()
         },
         participants: [],
+        lurkers: [],
         allParticipantsDone: function() {
 	    	for (let i=0; i<this.participants.length; i++) {
 				if (this.participants[i].itemScore === null) {
@@ -68,37 +69,84 @@ const expressRoutes = {
 	},
 
 	joinRoom: function(req, res) {
-		const roomName = req.body.roomName,
-			participantName = req.body.participantName;
+		const {
+			participantName,
+			participantId,
+			roomName,
+			roomId=dbi.getRoomId(roomName)
+		 } = req.body;
 
-		const roomId = dbi.getRoomId(roomName);
 		if (_.isEmpty(roomId)) {
+			// If no roomName provided in RQ then neither identifier was provided in RQ which is bad
+			if (_.isEmpty(roomName)) {
+				throw {
+					type: "STATUS",
+					message: "No valid room identifier provided",
+					status: HTTP_STATUS.BAD_REQUEST
+				};
+			// if roomName WAS provided in RQ but roomId still not found, invalid roomName provided
+			} else {
+				throw {
+					type: "STATUS",
+					message: "No room found with that name",
+					status: HTTP_STATUS.NOT_FOUND
+				};
+			}
+		}
+
+		let room = dbi.checkOutRoom(roomId, "joinRoom");
+		let returnParticipant;
+
+		if (!_.isEmpty(participantId)) {
+			// Look for participant in room.participants
+			returnParticipant = _.find(room.participants, { id: participantId });
+			// If not found...
+			if (_.isEmpty(returnParticipant)) {
+				// Look for participant in room.lurkers and remove from that list if found
+				returnParticipant = _.remove(room.lurkers, { id: participantId })[0];
+				// If found in lurkers...
+				if (!_.isEmpty(returnParticipant)) {
+					// Add back to room.participants collection
+					room.participants = _.concat(room.participants, returnParticipant);
+					// If the only participant in colloection...
+					if (_.isEqual(room.participants.length, 1)) {
+						// Set this participant as owner of the room
+						room.ownerId = returnParticipant.id;
+					}
+				// If not found in room.lurkers either...
+				} else {
+					throw {
+						type: "STATUS",
+						message: "No participant with that id exists in this room",
+						status: HTTP_STATUS.NOT_FOUND
+					};
+				}
+			}
+		} else if (!_.isEmpty(participantName)) {
+			_.forEach(room.participants, (participant) => {
+				// TODO remove toLowerCase() once FE handles case and capitalisation (BE should not alter data)
+				if (_.isEqual(participant.name.toLowerCase(), participantName.toLowerCase())) {
+					dbi.checkInRoom(roomId);
+					throw {
+						type: "STATUS",
+						message: "A participant with that name already exists in this room",
+						status: HTTP_STATUS.CONFLICT
+					};
+				}
+			});
+			returnParticipant = new Participant(participantName);
+			room.participants.push(returnParticipant);
+		} else {
 			throw {
 				type: "STATUS",
-				message: "No room found with that name",
-				status: HTTP_STATUS.NOT_FOUND
+				message: "No valid participant identifier provided",
+				status: HTTP_STATUS.BAD_REQUEST
 			};
 		}
 
-		let room = dbi.checkOutRoom(roomId);
-
-		_.forEach(room.participants, (participant) => {
-			if (_.isEqual(participant.name.toLowerCase(), participantName.toLowerCase())) {
-				dbi.checkInRoom(roomId);
-				throw {
-					type: "STATUS",
-					message: "A participant with that name already exists in this room",
-					status: HTTP_STATUS.CONFLICT
-				};
-			}
-		});
-		
-		const newParticipant = new Participant(participantName);
-		room.participants.push(newParticipant);
-
 		res.json({
 			room: room,
-			participant: newParticipant,
+			participant: returnParticipant,
 			timeStamp: Date.now()
 		});
 

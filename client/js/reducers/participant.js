@@ -13,8 +13,6 @@ const participant = (state = init, {type, payload}) => {
 	) return state;
 
 	switch (type) {
-		case "CREATE_ROOM":
-			return payload.participant;
 		case "JOIN_ROOM":
 			return payload.participant;
 		case "LEAVE_ROOM":
@@ -35,5 +33,5 @@ const participant = (state = init, {type, payload}) => {
 	}
 	return state ;
 }
- 
+
 export default participant;

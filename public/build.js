@@ -53,29 +53,48 @@ var _apiInterface = require('../utilities/apiInterface');
 
 var _apiInterface2 = _interopRequireDefault(_apiInterface);
 
+var _helperMethods = require('../utilities/helperMethods');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function identifyForFullstory(responseBody) {
+	if (!window.FS) return;
+
+	var room = responseBody.room,
+	    participant = responseBody.participant;
+
+	FS.identify(participant.id, {
+		displayName: participant.name,
+		roomName_str: room.name,
+		isOwner_bool: room.ownerId === participant.id
+	});
+}
+
+function joinRoom(response) {
+	_reducers.store.dispatch({
+		type: "JOIN_ROOM",
+		payload: response.body
+	});
+	identifyForFullstory(response.body);
+
+	var _response$body = response.body,
+	    room = _response$body.room,
+	    participant = _response$body.participant;
+
+
+	(0, _helperMethods.setStorageItem)("roomId", room.id);
+	(0, _helperMethods.setStorageItem)("participantId", participant.id);
+};
 
 exports.default = {
 
-	joinRoomResponse: function joinRoomResponse(response) {
-		_reducers.store.dispatch({
-			type: "JOIN_ROOM",
-			payload: response.body
-		});
-		window.location = "/#/PokerRoom";
-	},
+	joinRoomResponse: joinRoom,
 
 	joinRoomError: function joinRoomError(error, response, message) {
 		alert(message);
 	},
 
-	createRoomResponse: function createRoomResponse(response) {
-		_reducers.store.dispatch({
-			type: "CREATE_ROOM",
-			payload: response.body
-		});
-		window.location = "/#/PokerRoom";
-	},
+	createRoomResponse: joinRoom,
 
 	createRoomError: function createRoomError(error, response, message) {
 		alert(message);
@@ -102,7 +121,7 @@ exports.default = {
 	}
 };
 
-},{"../reducers":8,"../utilities/apiInterface":13}],3:[function(require,module,exports){
+},{"../reducers":8,"../utilities/apiInterface":13,"../utilities/helperMethods":15}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -151,6 +170,8 @@ var _Router2 = _interopRequireDefault(_Router);
 var _helperMethods = require('./utilities/helperMethods');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//import fullstory from './utilities/fullstory'
 
 function dispatchNavigate() {
 	_reducers.store.dispatch({
@@ -239,6 +260,10 @@ var JoinRoom = function (_React$Component) {
 				}
 			}.bind(this));
 		}
+
+		// Join an existing poker room matching the given name
+		// A participant is created with the given name
+
 	}, {
 		key: 'joinRoom',
 		value: function joinRoom() {
@@ -252,6 +277,10 @@ var JoinRoom = function (_React$Component) {
 				roomName: roomName
 			});
 		}
+
+		// Create a new poker room with the givent name
+		// Automatically joins room after creating a participant with the given name
+
 	}, {
 		key: 'createRoom',
 		value: function createRoom() {
@@ -267,9 +296,14 @@ var JoinRoom = function (_React$Component) {
 				cardType: cardType
 			});
 		}
+
+		// Renders the html for the entire 'Join Room' page
+		// Dependencies = none
+
 	}, {
 		key: 'render',
 		value: function render() {
+			// Populate the cardType drop down with options listed as keys in the CARDS constant
 			var cardTypeOptions = (0, _lodash.map)((0, _lodash.keys)(_constants.CARDS), function (cardType, index) {
 				return _react2.default.createElement(
 					'option',
@@ -332,6 +366,8 @@ var _lodash = require('lodash');
 var _actions = require('../actions');
 
 var _constants = require('../utilities/constants');
+
+var _helperMethods = require('../utilities/helperMethods');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -414,9 +450,14 @@ var PokerRoom = function (_React$Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
+			var roomId = this.props.room.id || (0, _helperMethods.getStorageItem)("roomId");
+			var participantId = this.props.participant.id || (0, _helperMethods.getStorageItem)("participantId");
+
+			if ((0, _lodash.isEmpty)(roomId) || (0, _lodash.isEmpty)(participantId)) return;
+
 			this.props.subscribe({
-				roomId: this.props.room.id,
-				participantId: this.props.participant.id
+				roomId: roomId,
+				participantId: participantId
 			});
 
 			if ((0, _lodash.isEmpty)(this.refs.txtItemName)) return;
@@ -430,7 +471,7 @@ var PokerRoom = function (_React$Component) {
 		key: 'shouldComponentUpdate',
 		value: function shouldComponentUpdate(nextProps) {
 			// Only update if properties have changed
-			// Normally use '===' comparison but updates could be sync from server
+			// Normally use '===' comparison but updates could be sync from server so objects won't be same
 			if (!(0, _lodash.isEqual)(this.props.room, nextProps.room) || !(0, _lodash.isEqual)(this.props.participant, nextProps.participant)) {
 				return true;
 			}
@@ -632,12 +673,14 @@ var PokerRoom = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PokerRoom);
 
-},{"../actions":3,"../utilities/constants":14,"lodash":82,"react":261,"react-redux":230}],7:[function(require,module,exports){
+},{"../actions":3,"../utilities/constants":14,"../utilities/helperMethods":15,"lodash":82,"react":261,"react-redux":230}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -646,6 +689,12 @@ var _react2 = _interopRequireDefault(_react);
 var _reactRedux = require('react-redux');
 
 var _lodash = require('lodash');
+
+var _helperMethods = require('../utilities/helperMethods');
+
+var _constants = require('../utilities/constants');
+
+var _actions = require('../actions');
 
 var _PokerRoom = require('./PokerRoom');
 
@@ -657,55 +706,113 @@ var _JoinRoom2 = _interopRequireDefault(_JoinRoom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * end of the URL so it can link to your browser history correctly or something I've never needed to use.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * So I threw it out 3 projects ago and now I use my own version.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * It takes a string value for the current page from a reducer that updates when the window.hash changes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * so every time you use window.location it updates which page is rendered. Uses the same /#/ work-around as
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * It also doubles up as a bouncer for apps that require login of sorts (like this one)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Just subscribe it to whichever reducer tracks your logged-on status ('participant' in this case) and redirect
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * as necessary when that status changes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
 var mapStateToProps = function mapStateToProps(_ref) {
 	var page = _ref.page,
-	    participant = _ref.participant;
+	    participant = _ref.participant,
+	    requests = _ref.requests;
 
 	return {
 		page: page,
-		participant: participant
+		participant: participant,
+		requests: requests
 	};
-}; /**
-    * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the 
-    * end of the URL so it can link to your browser history correctly or something I've never needed to use.
-    * So I threw it out 3 projects ago and now I use my own version.
-    * 
-    * It takes a string value for the current page from a reducer that updates when the window.hash changes
-    * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as 
-    * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
-    *
-    * It also doubles up as a bouncer for apps that require login of sorts (like this one)
-    * Just subscribe it to whichever reducer tracks your logged-on status ('participant' in this case) and redirect
-    * as necessary when that status changes
-    */
+};
 
-
-var Router = function Router(_ref2) {
+var authCheck = function authCheck(_ref2) {
 	var page = _ref2.page,
-	    participant = _ref2.participant;
+	    participant = _ref2.participant,
+	    requests = _ref2.requests;
 
+	if ((0, _lodash.isEmpty)(participant)) {
+		var roomId = (0, _helperMethods.getStorageItem)("roomId");
+		var participantId = (0, _helperMethods.getStorageItem)("participantId");
 
-	if ((0, _lodash.isEmpty)(participant.id)) {
-		if (!(0, _lodash.isEqual)(page, "JoinRoom")) {
+		// If mounting after a page refresh and details were stored in session storage
+		if (!(0, _lodash.isEmpty)(roomId) && !(0, _lodash.isEmpty)(participantId)) {
+			// Attempt to re-join same room again
+			if ((0, _lodash.isEqual)(requests.joinRoom, _constants.REQUEST_STATES.READY)) {
+				_actions.apiRequests.joinRoom({ roomId: roomId, participantId: participantId });
+			}
+			// If details were not stored and joinRoom request isn't busy
+		} else if ((0, _lodash.isEqual)(page, "PokerRoom") && !(0, _lodash.isEqual)(requests.joinRoom, _constants.REQUEST_STATES.BUSY)) {
+			// Boot to the log in screen
 			window.location = "/#/JoinRoom";
 		}
+	} else {
+		if ((0, _lodash.isEqual)(page, "JoinRoom")) {
+			window.location = "/#/PokerRoom";
+		}
+	}
+};
+
+var pages = {
+	PokerRoom: _react2.default.createElement(_PokerRoom2.default, null),
+	JoinRoom: _react2.default.createElement(_JoinRoom2.default, null)
+};
+
+var Router = function (_React$Component) {
+	_inherits(Router, _React$Component);
+
+	function Router(props) {
+		_classCallCheck(this, Router);
+
+		return _possibleConstructorReturn(this, (Router.__proto__ || Object.getPrototypeOf(Router)).call(this, props));
 	}
 
-	var pages = {
-		PokerRoom: _react2.default.createElement(_PokerRoom2.default, null),
-		JoinRoom: _react2.default.createElement(_JoinRoom2.default, null)
-	};
+	_createClass(Router, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			authCheck(this.props);
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			authCheck(this.props);
+		}
+	}, {
+		key: 'shouldComponentUpdate',
+		value: function shouldComponentUpdate(nextProps) {
+			if (!(0, _lodash.isEqual)(nextProps.page, this.props.page) || !(0, _lodash.isEqual)(nextProps.participant, this.props.participant) || !(0, _lodash.isEqual)(nextProps.requests, this.props.requests)) {
+				return true;
+			}
+			return false;
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			return pages[this.props.page] || _react2.default.createElement(
+				'div',
+				{ style: { marginTop: 100, textAlign: "center" } },
+				'Page Not Found'
+			);
+		}
+	}]);
 
-	return pages[page] || _react2.default.createElement(
-		'div',
-		{ style: { marginTop: 100, textAlign: "center" } },
-		'Page Not Found'
-	);
-};
+	return Router;
+}(_react2.default.Component);
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Router);
 
-},{"./JoinRoom":5,"./PokerRoom":6,"lodash":82,"react":261,"react-redux":230}],8:[function(require,module,exports){
+},{"../actions":3,"../utilities/constants":14,"../utilities/helperMethods":15,"./JoinRoom":5,"./PokerRoom":6,"lodash":82,"react":261,"react-redux":230}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -751,7 +858,9 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
-var init = "Home";
+var _helperMethods = require('../utilities/helperMethods');
+
+var init = (0, _helperMethods.getCurrentRoute)();
 
 var page = function page() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
@@ -770,7 +879,7 @@ var page = function page() {
 
 exports.default = page;
 
-},{"lodash":82,"redux":267}],10:[function(require,module,exports){
+},{"../utilities/helperMethods":15,"lodash":82,"redux":267}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -795,8 +904,6 @@ var participant = function participant() {
 	if (payload !== undefined && payload.timestamp !== undefined && lastTimestamp > payload.timestamp) return state;
 
 	switch (type) {
-		case "CREATE_ROOM":
-			return payload.participant;
 		case "JOIN_ROOM":
 			return payload.participant;
 		case "LEAVE_ROOM":
@@ -831,11 +938,13 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
-var init = {
-	joinRoom: "ready",
-	createRoom: "ready",
-	leaveRoom: "ready"
-};
+var _constants = require('../utilities/constants');
+
+var init = {};
+
+(0, _lodash.forEach)((0, _lodash.keys)(_constants.API_ENDPOINTS), function (apiEndpoint) {
+	init[apiEndpoint] = _constants.REQUEST_STATES.READY;
+});
 
 var requests = function requests() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
@@ -843,11 +952,13 @@ var requests = function requests() {
 	var type = _ref.type,
 	    payload = _ref.payload;
 
+
+	var newState = {};
+
 	switch (type) {
-		case "SET_REQUEST_STATUS":
-			var newState = void 0;
+		case "SET_REQUEST_STATE":
 			newState[payload.requestName] = payload.requestStatus;
-			return assing({}, newState, state);
+			return (0, _lodash.assign)({}, newState, state);
 		default:
 			return state;
 	}
@@ -856,7 +967,7 @@ var requests = function requests() {
 
 exports.default = requests;
 
-},{"lodash":82,"redux":267}],12:[function(require,module,exports){
+},{"../utilities/constants":14,"lodash":82,"redux":267}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -903,7 +1014,6 @@ var room = function room() {
 	var newProps = {};
 
 	switch (type) {
-		case "CREATE_ROOM":
 		case "JOIN_ROOM":
 		case "SYNC_ROOM":
 			return payload.room;
@@ -963,7 +1073,9 @@ var request = require('superagent-defaults')();
 var io = require('socket.io-client');
 
 
-request.set({ "X-Clacks-Overhead": "GNU Terry Pratchett" });
+request.set({
+	"X-Clacks-Overhead": "GNU Terry Pratchett"
+});
 
 var socket;
 function getSocket() {
@@ -977,18 +1089,31 @@ function getSocket() {
 exports.default = {
 
 	sendRequest: function sendRequest(requestName, requestObject) {
-		_reducers.store.dispatch({ type: "SET_REQUEST_STATE", requestName: requestName, requestState: "BUSY" });
+		_reducers.store.dispatch({
+			type: "SET_REQUEST_STATE",
+			payload: {
+				requestName: requestName,
+				requestState: _constants.REQUEST_STATES.BUSY
+			}
+		});
 
 		request.post(_constants.API_ENDPOINTS[requestName]).send(requestObject).end(function (err, res) {
 			if (!res) {
-				_reducers.store.dispatch({ type: "ADD_ERRORS", errorMessages: "Request has been terminated\nPlease check your internet connection and try again." });
-				_reducers.store.dispatch({ type: "FAIL_PENDING_REQUESTS" });
+				_reducers.store.dispatch({
+					type: "ADD_ERRORS",
+					payload: {
+						errorMessages: "Request has been terminated\nPlease check your internet connection and try again."
+					}
+				});
+				_reducers.store.dispatch({
+					type: "FAIL_PENDING_REQUESTS"
+				});
 				return;
 			}
 
 			var requestState = void 0;
 			if (err) {
-				requestState = "FAILED";
+				requestState = _constants.REQUEST_STATES.FAILED;
 
 				var errorMessage = _constants.ERROR_MESSAGES[requestName] ? _constants.ERROR_MESSAGES[requestName][res.status] : null;
 				if (errorMessage) _reducers.store.dispatch({ type: "ADD_ERRORS", errorMessages: errorMessage });
@@ -996,13 +1121,19 @@ exports.default = {
 				var handler = _actions.apiResponses[requestName + "Error"];
 				if (handler) handler(err, res, errorMessage);
 			} else {
-				requestState = "READY";
+				requestState = _constants.REQUEST_STATES.READY;
 
 				var _handler = _actions.apiResponses[requestName + "Response"];
 				if (_handler) _handler(res);
 			}
 
-			_reducers.store.dispatch({ type: "SET_REQUEST_STATE", requestName: requestName, requestState: requestState });
+			_reducers.store.dispatch({
+				type: "SET_REQUEST_STATE",
+				payload: {
+					requestName: requestName,
+					requestState: requestState
+				}
+			});
 		});
 	},
 
@@ -1040,9 +1171,16 @@ var ERROR_MESSAGES = {
 	}
 };
 
+var REQUEST_STATES = {
+	BUSY: "BUSY",
+	FAILED: "FAILED",
+	READY: "READY"
+};
+
 exports.API_ENDPOINTS = API_ENDPOINTS;
 exports.CARDS = CARDS;
 exports.ERROR_MESSAGES = ERROR_MESSAGES;
+exports.REQUEST_STATES = REQUEST_STATES;
 
 },{}],15:[function(require,module,exports){
 'use strict';
@@ -1061,7 +1199,7 @@ var _constants = require('./constants');
 /**
  * Route Parser
  * Detects which page component the router.js component should be serving based on the hash value. Hash value is used rather
- * than actual routes as single page applications technically only have one route. Using hash routes at all allows us to retain 
+ * than actual routes as single page applications technically only have one route. Using hash routes at all allows us to retain
  * use of the browser history object.
  */
 var getCurrentRoute = exports.getCurrentRoute = function getCurrentRoute() {
@@ -1097,18 +1235,18 @@ var getRequestName = exports.getRequestName = function getRequestName(url) {
 };
 
 /**
- * localStorage Manager
- * localStorage isn't always accessible (private browsing, no space, etc) so these methods test if localStorage is available and
+ * sessionStorage Manager
+ * sessionStorage isn't always accessible (private browsing, no space, etc) so these methods test if sessionStorage is available and
  * if not, fall back an a pojo stored here
  */
 var backUpStorage = {};
 var setStorageItem = exports.setStorageItem = function setStorageItem(key, value) {
 	if (value === undefined || value === null) {
-		localStorage.removeItem(key);
+		sessionStorage.removeItem(key);
 		backUpStorage[key] = undefined;
 	} else {
 		try {
-			localStorage.setItem(key, value);
+			sessionStorage.setItem(key, value);
 		} catch (e) {
 			backUpStorage[key] = value;
 		}
@@ -1117,7 +1255,7 @@ var setStorageItem = exports.setStorageItem = function setStorageItem(key, value
 
 var getStorageItem = exports.getStorageItem = function getStorageItem(key) {
 	try {
-		return localStorage.getItem(key);
+		return sessionStorage.getItem(key);
 	} catch (e) {
 		return backUpStorage[key];
 	}
@@ -1125,7 +1263,7 @@ var getStorageItem = exports.getStorageItem = function getStorageItem(key) {
 
 /**
  * Mixed Text Sorter
- * When sorting strings, numbers are sorted lexicographically (by position, ie. by digit, from left-to-right eg. 1, 11, 12, 2, 21 Instead of 1, 2, 11, 12, 21) 
+ * When sorting strings, numbers are sorted lexicographically (by position, ie. by digit, from left-to-right eg. 1, 11, 12, 2, 21 Instead of 1, 2, 11, 12, 21)
  * This method looks out for numbers in a string and, if the substring before the numbers is identical, sorts by the integer values of the number.
  * This function assumes that all objects in the array are of the same type as the first.
  */

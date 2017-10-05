@@ -1,8 +1,8 @@
 import { store } from '../reducers';
 import apiInterface from '../utilities/apiInterface';
- 
+
 export default {
-	
+
 	joinRoom: function(requestObject) {
 		apiInterface.sendRequest("joinRoom", requestObject);
 	},

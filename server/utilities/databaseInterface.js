@@ -1,26 +1,20 @@
 const _ = require('lodash');
 const HTTP_STATUS = require('./constants').HTTP_STATUS;
 const ERRORS = require('./constants').ERRORS;
+const TIME_OUTS = require('./constants').TIME_OUTS;
+const sleep = require('./helperMethods').sleep;
 
 let _rooms = {};
-
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds) {
-            break;
-        }
-    }
-}
-
-const TIMEOUT_LIMIT = 1000;
 
 const db = {
 
     getRoomId: function(roomName) {
-        const roomIds = _.keys(_rooms);
+        console.log(roomName);
+        if (_.isEmpty(roomName)) return null;
 
+        const roomIds = _.keys(_rooms);
         let currentRoomId;
+
         for (let i = 0; i < roomIds.length; i++) {
             currentRoomId = roomIds[i];
             if (_.isEqual(_rooms[currentRoomId].name, roomName)) {
@@ -30,13 +24,13 @@ const db = {
         return null;
     },
 
-    checkOutRoom: function(roomId) {
+    checkOutRoom: function(roomId, fn) {
         const room = _rooms[roomId];
 
         if (room === undefined) {
             throw {
                 type: ERRORS.CLIENT_ERROR,
-                message: "Invalid roomId for 'checkOutRoom'",
+                message: "Invalid roomId for 'checkOutRoom' ("+roomId+") " + fn,
                 status: HTTP_STATUS.BAD_REQUEST
             };
         }
@@ -45,14 +39,14 @@ const db = {
         while (room.isLocked) {
             sleep(5);
             timer += 5;
-            if (timer >= TIMEOUT_LIMIT) {
+            if (timer >= TIME_OUTS.LOCKED_ROOM) {
                 room.isLocked = false;
                 throw {
                     type: ERRORS.SERVER_ERROR,
-                    message: "Room lock timeout ( "+TIMEOUT_LIMIT+"s )",
+                    message: "Room lock timeout ( "+TIME_OUTS.LOCKED_ROOM+"s )",
                     status: HTTP_STATUS.GATEWAY_TIMEOUT
                 };
-            }   
+            }
         }
 
         room.isLocked = true;

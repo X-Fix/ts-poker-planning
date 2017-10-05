@@ -5,14 +5,14 @@ const ERRORS = require('./constants').ERRORS;
 const errorHandler = {
 
 	handle: function(error, { response, socket, io }) {
-		console.log(error.message, error.stack);
+		console.log(error.message, error.stack||"");
 		if (socket && io) {
-			
+
 			if (io.sockets.connected[socket.conn.id]) {
 				io.sockets.connected[socket.conn.id]
-				.emit("broke", error);	
+				.emit("broke", error);
 			}
-			
+
 		} else if (response) {
 			if (error.stack) {
 				response.status(500);

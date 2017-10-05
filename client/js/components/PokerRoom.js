@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { find, isEmpty, isEqual, map } from 'lodash';
 import { apiRequests } from '../actions';
 import { CARDS } from '../utilities/constants';
+import { getStorageItem } from '../utilities/helperMethods';
 
 const Item = (itemName) => {
 	return {
@@ -20,7 +21,7 @@ let onEnter = (event, fn) => {
 };
 
 const mapStateToProps = ({ participant, room }) => {
-	return { 
+	return {
 		participant,
 		room
 	};
@@ -66,9 +67,14 @@ class PokerRoom extends React.Component {
 	}
 
 	componentDidMount() {
+		const roomId = this.props.room.id || getStorageItem("roomId");
+		const participantId = this.props.participant.id || getStorageItem("participantId");
+
+		if (isEmpty(roomId) || isEmpty(participantId)) return;
+
 		this.props.subscribe({
-			roomId: this.props.room.id,
-			participantId: this.props.participant.id
+			roomId,
+			participantId
 		});
 
 		if (isEmpty(this.refs.txtItemName)) return;
@@ -79,7 +85,7 @@ class PokerRoom extends React.Component {
 
 	shouldComponentUpdate(nextProps) {
 		// Only update if properties have changed
-		// Normally use '===' comparison but updates could be sync from server
+		// Normally use '===' comparison but updates could be sync from server so objects won't be same
 		if (!isEqual(this.props.room, nextProps.room) ||
 			!isEqual(this.props.participant, nextProps.participant)) {
 			return true;
@@ -105,7 +111,7 @@ class PokerRoom extends React.Component {
 		if (!isEqual(this.props.participant.id, this.props.room.ownerId) || isEmpty(itemName)) return;
 
 		this.props.createItem({
-			roomId: this.props.room.id, 
+			roomId: this.props.room.id,
 			participantId: this.props.participant.id,
 			item: new Item(itemName)
 		});
@@ -130,7 +136,7 @@ class PokerRoom extends React.Component {
 		const targetId = event.target.dataset.value;
 
 		if (!isEqual(this.props.room.ownerId, this.props.participant.id)) return;
-		
+
 		this.props.kickParticipant({
 			roomId: this.props.room.id,
 			participantId: this.props.participant.id,
@@ -157,7 +163,7 @@ class PokerRoom extends React.Component {
 	// Generates participant card component for the provided participant
 	// Can be abstracted to a separate functional component
 	makeParticipantComponent(participant, index) {
-		
+
 		// Various boolean values used to determine wether to show relevant element or not
 		const thisIsOwner = isEqual(participant.id, this.props.room.ownerId);
 		const thisIsMe = isEqual(participant.id, this.props.participant.id);
@@ -165,7 +171,7 @@ class PokerRoom extends React.Component {
 		const canKick = (iAmOwner && !thisIsOwner);
 		const hasScore = !isEmpty(participant.itemScore);
 		const showScore = (hasScore && this.props.room.item.isLocked);
-		
+
 		return (
 			<div key={index} className="participant-card">
 				<div className="participant-card__participant-icons">
@@ -176,7 +182,7 @@ class PokerRoom extends React.Component {
 					}
 					{
 						thisIsMe ?
-						<span className="glyph chevron-right" />
+						<span className="glyph chevron-right"/>
 						: null
 					}
 				</div>
@@ -186,7 +192,7 @@ class PokerRoom extends React.Component {
 					<div className="btn kick-participant" data-value={participant.id} onClick={this.kickParticipant}>Kick</div>
 					: null
 				}
-				
+
 				{
 					showScore ?
 					<div className="participant-card__item-score">{participant.itemScore}</div>
@@ -221,7 +227,7 @@ class PokerRoom extends React.Component {
 				<div className="poker-cards-container">
 					{ cardComponents }
 					{
-						isOwner ? 
+						isOwner ?
 						<div className="create-item-container">
 							{
 								itemEmpty || itemLocked ?

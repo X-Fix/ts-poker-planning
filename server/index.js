@@ -1,8 +1,9 @@
-const _ = require("lodash");
-const http = require("http").Server(require("./express"));
-const io = require("socket.io")(http);
-const errorHandler = require('./utilities/errorHandler');
-const socketRoutes = require('./routes/socketRoutes');
+const _             = require("lodash");
+const http          = require("http").Server(require("./express"));
+const io            = require("socket.io")(http);
+const errorHandler  = require('./utilities/errorHandler');
+const jobRunner     = require('./utilities/jobRunner');
+const socketRoutes  = require('./routes/socketRoutes');
 
 io.on("connection", function(socket) {
     console.log("User connected", socket.conn.id);
@@ -10,7 +11,7 @@ io.on("connection", function(socket) {
 
     _.forEach(_.keys(socketRoutes), (routeName) => {
         socket.on(routeName, (data) => {
-        	
+
         	switch (routeName) {
         		case "subscribe":
         			_roomId = data.roomId;
@@ -31,5 +32,7 @@ io.on("connection", function(socket) {
         })
     });
 });
+
+jobRunner();
 
 module.exports = http;
