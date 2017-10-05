@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { find, isEmpty, isEqual, map } from 'lodash';
 import { apiRequests } from '../actions';
 import { CARDS } from '../utilities/constants';
-import { getQueryParam } from '../utilities/helperMethods';
+import { getStorageItem } from '../utilities/helperMethods';
 
 const Item = (itemName) => {
 	return {
@@ -67,9 +67,14 @@ class PokerRoom extends React.Component {
 	}
 
 	componentDidMount() {
+		const roomId = this.props.room.id || getStorageItem("roomId");
+		const participantId = this.props.participant.id || getStorageItem("participantId");
+
+		if (isEmpty(roomId) || isEmpty(participantId)) return;
+
 		this.props.subscribe({
-			roomId: this.props.room.id,
-			participantId: this.props.participant.id
+			roomId,
+			participantId
 		});
 
 		if (isEmpty(this.refs.txtItemName)) return;
@@ -80,7 +85,7 @@ class PokerRoom extends React.Component {
 
 	shouldComponentUpdate(nextProps) {
 		// Only update if properties have changed
-		// Normally use '===' comparison but updates could be sync from server
+		// Normally use '===' comparison but updates could be sync from server so objects won't be same
 		if (!isEqual(this.props.room, nextProps.room) ||
 			!isEqual(this.props.participant, nextProps.participant)) {
 			return true;

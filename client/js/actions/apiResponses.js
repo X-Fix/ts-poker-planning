@@ -22,7 +22,7 @@ function joinRoom(response) {
 
 	const { room, participant } = response.body;
 
-	window.location = "/#/PokerRoom?roomId="+room.id;
+	setStorageItem("roomId", room.id);
 	setStorageItem("participantId", participant.id);
 };
 

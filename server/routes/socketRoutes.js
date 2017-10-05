@@ -38,8 +38,6 @@ function checkParticipantIsRoomOwner(participantId, room) {
 function cleanUpEmptyRoom(room) {
 	dbi.checkInRoom(room.id);
 
-	console.log("Waiting "+TIME_OUTS.EMPTY_ROOM+"ms...");
-	sleep(TIME_OUTS.EMPTY_ROOM);
 	if (room.participants.length === 0) {
 		console.log("Deleting room");
 		dbi.deleteRoom(room.id);
@@ -127,9 +125,9 @@ const socketRoutes = {
         const participant = _.find(room.participants, {socketId: socketId});
 		if (_.isEmpty(participant)) return;
 
-		room.participants = _.filter(room.participants, (participant) => {
+		/*room.participants = _.filter(room.participants, (participant) => {
 			return !_.isEqual(socketId, participant.socketId);
-		});
+		});*/
 
 		const roomOwnerLeft = _.isEqual(participant.id, room.ownerId);
 		const roomIsEmpty = room.participants.length === 0;
@@ -137,6 +135,8 @@ const socketRoutes = {
 		if (roomOwnerLeft) {
 			if (roomIsEmpty) {
 				room.ownerId = null;
+				console.log("Waiting "+TIME_OUTS.EMPTY_ROOM+"ms...");
+				setTimeout(cleanUpEmptyRoom, TIME_OUTS.EMPTY_ROOM, room);
 			} else {
 				room.ownerId = room.participants[0].id;
 			}

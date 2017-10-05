@@ -1,11 +1,12 @@
-import { assign } from 'lodash';
-import { createStore } from 'redux'
+import { assign, forEach, keys } from 'lodash';
+import { createStore } from 'redux';
+import { API_ENDPOINTS, REQUEST_STATES } from '../utilities/constants';
 
-const init = {
-	joinRoom: "ready",
-	createRoom: "ready",
-	leaveRoom: "ready"
-};
+let init = {};
+
+forEach(keys(API_ENDPOINTS), apiEndpoint => {
+	init[apiEndpoint] = REQUEST_STATES.READY
+});
 
 const requests = (state = init, {type, payload}) => {
 	switch (type) {
@@ -18,5 +19,5 @@ const requests = (state = init, {type, payload}) => {
 	}
 	return state ;
 }
- 
+
 export default requests;

@@ -4,7 +4,7 @@
  * So I threw it out 3 projects ago and now I use my own version.
  *
  * It takes a string value for the current page from a reducer that updates when the window.hash changes
- * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as
+ * so every time you use window.location it updates which page is rendered. Uses the same /#/ work-around as
  * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
  *
  * It also doubles up as a bouncer for apps that require login of sorts (like this one)
@@ -14,42 +14,78 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { isEmpty, isEqual } from 'lodash';
-import { getStorageItem, getQueryParam } from '../utilities/helperMethods';
+import { getStorageItem } from '../utilities/helperMethods';
+import { REQUEST_STATES } from '../utilities/constants';
 import { apiRequests } from '../actions';
 import PokerRoom from './PokerRoom';
 import JoinRoom from './JoinRoom';
 
-const mapStateToProps = ({ page, participant }) => {
+const mapStateToProps = ({ page, participant, requests }) => {
 	return {
 		page,
-		participant
+		participant,
+		requests
 	}
 }
 
-const Router = ({ page, participant }) => {
-console.log(page);
-	if (isEmpty(participant.id)){
-		if (!isEqual(page, "JoinRoom")) {
-			if (isEqual(page, "PokerRoom")) {
-				const roomId = getQueryParam("roomId");
-				const participantId = getStorageItem("participantId");
-
-				if (!isEmpty(roomId) && !isEmpty(participantId)) {
-					console.log("Sending joinRoom request");
-					apiRequests.joinRoom({roomId, participantId});
-				}
+const authCheck = ({ page, participant, requests }) => {
+	if (isEmpty(participant)){
+		const roomId = getStorageItem("roomId");
+		const participantId = getStorageItem("participantId");
+console.log("Storage:", roomId, participantId);
+		// If mounting after a page refresh and details were stored in session storage
+		if (!isEmpty(roomId) && !isEmpty(participantId)) {
+			console.log("Sending joinRoom request");
+			// Attempt to re-join same room again
+			if (isEqual(requests.joinRoom, REQUEST_STATES.READY)) {
+				apiRequests.joinRoom({roomId, participantId});
 			}
-
+		// If details were not stored and joinRoom request isn't busy
+		} else if (isEqual(page, "PokerRoom") && !isEqual(requests.joinRoom, REQUEST_STATES.BUSY)) {
+			// Boot to the log in screen
 			window.location = "/#/JoinRoom";
 		}
+	} else {
+		if (isEqual(page, "JoinRoom")) {
+			window.location = "/#/PokerRoom";
+		}
+	}
+}
+
+class Router extends React.Component {
+
+	constructor(props) {
+		super(props);
 	}
 
-	const pages = {
-		PokerRoom: <PokerRoom />,
-		JoinRoom: <JoinRoom />
+	componentDidMount() {
+		authCheck(this.props);
 	}
 
-	return pages[page] || <div style={{marginTop: 100, textAlign: "center"}} >Page Not Found</div>;
+	componentDidUpdate() {
+		authCheck(this.props);
+	}
+
+	shouldComponentUpdate(nextProps) {
+		if (!isEqual(nextProps.page, this.props.page) ||
+			!isEqual(nextProps.participant, this.props.participant) ||
+			!isEqual(nextProps.requests, this.props.requests)) {
+			return true;
+		}
+		return false;
+	}
+
+	render() {
+		const { page } = this.props;
+		console.log(page);
+
+		const pages = {
+			PokerRoom: <PokerRoom />,
+			JoinRoom: <JoinRoom />
+		}
+
+		return pages[page] || <div style={{marginTop: 100, textAlign: "center"}} >Page Not Found</div>;
+	}
 }
 
 export default connect(mapStateToProps)(Router);

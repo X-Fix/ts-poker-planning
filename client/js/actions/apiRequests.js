@@ -1,8 +1,9 @@
 import { store } from '../reducers';
 import apiInterface from '../utilities/apiInterface';
- 
+import { getCurrentRoute } from '../utilities/helperMethods';
+
 export default {
-	
+
 	joinRoom: function(requestObject) {
 		apiInterface.sendRequest("joinRoom", requestObject);
 	},
@@ -12,6 +13,7 @@ export default {
 	},
 
 	subscribe: function(requestObject) {
+		console.log("Subscribing:", getCurrentRoute(), window.location);
 		apiInterface.makeSocketRequest("subscribe", requestObject);
 	},
 

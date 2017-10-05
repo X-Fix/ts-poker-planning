@@ -9,9 +9,12 @@ let _rooms = {};
 const db = {
 
     getRoomId: function(roomName) {
-        const roomIds = _.keys(_rooms);
+        console.log(roomName);
+        if (_.isEmpty(roomName)) return null;
 
+        const roomIds = _.keys(_rooms);
         let currentRoomId;
+
         for (let i = 0; i < roomIds.length; i++) {
             currentRoomId = roomIds[i];
             if (_.isEqual(_rooms[currentRoomId].name, roomName)) {
@@ -27,7 +30,7 @@ const db = {
         if (room === undefined) {
             throw {
                 type: ERRORS.CLIENT_ERROR,
-                message: "Invalid roomId for 'checkOutRoom'",
+                message: "Invalid roomId for 'checkOutRoom' ("+roomId+") " + _rooms,
                 status: HTTP_STATUS.BAD_REQUEST
             };
         }

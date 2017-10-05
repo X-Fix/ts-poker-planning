@@ -1,7 +1,7 @@
 const request = require('superagent-defaults')();
 const io = require('socket.io-client');
 import { store } from '../reducers';
-import { API_ENDPOINTS, ERROR_MESSAGES } from './constants';
+import { API_ENDPOINTS, ERROR_MESSAGES, REQUEST_STATES } from './constants';
 import { apiResponses } from '../actions';
 
 request
@@ -21,7 +21,7 @@ function getSocket() {
 export default {
 
 	sendRequest: (requestName, requestObject) => {
-		store.dispatch({type:"SET_REQUEST_STATE", requestName: requestName, requestState: "BUSY"});
+		store.dispatch({type:"SET_REQUEST_STATE", requestName: requestName, requestState: REQUEST_STATES.BUSY});
 
 		request
 		.post(API_ENDPOINTS[requestName])
@@ -35,7 +35,7 @@ export default {
 
 			let requestState;
 			if (err) {
-				requestState = "FAILED";
+				requestState = REQUEST_STATES.FAILED;
 
 				let errorMessage = ERROR_MESSAGES[requestName] ? ERROR_MESSAGES[requestName][res.status] : null;
 				if (errorMessage) store.dispatch({type: "ADD_ERRORS", errorMessages: errorMessage});
@@ -43,7 +43,7 @@ export default {
 				let handler = apiResponses[requestName+"Error"];
 				if (handler) handler(err, res, errorMessage);
 			} else {
-				requestState = "READY";
+				requestState = REQUEST_STATES.READY;
 
 				let handler = apiResponses[requestName+"Response"];
 				if (handler) handler(res);

@@ -19,8 +19,15 @@ const ERROR_MESSAGES = {
 	}
 };
 
-export { 
+const REQUEST_STATES = {
+	BUSY: "BUSY",
+	FAILED: "FAILED",
+	READY: "READY"
+}
+
+export {
 	API_ENDPOINTS,
 	CARDS,
-	ERROR_MESSAGES
+	ERROR_MESSAGES,
+	REQUEST_STATES
 };

@@ -11,6 +11,8 @@ var _apiInterface = require('../utilities/apiInterface');
 
 var _apiInterface2 = _interopRequireDefault(_apiInterface);
 
+var _helperMethods = require('../utilities/helperMethods');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
@@ -24,6 +26,7 @@ exports.default = {
 	},
 
 	subscribe: function subscribe(requestObject) {
+		console.log("Subscribing:", (0, _helperMethods.getCurrentRoute)(), window.location);
 		_apiInterface2.default.makeSocketRequest("subscribe", requestObject);
 	},
 
@@ -40,7 +43,7 @@ exports.default = {
 	}
 };
 
-},{"../reducers":8,"../utilities/apiInterface":13}],2:[function(require,module,exports){
+},{"../reducers":8,"../utilities/apiInterface":13,"../utilities/helperMethods":15}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -82,7 +85,7 @@ function joinRoom(response) {
 	    participant = _response$body.participant;
 
 
-	window.location = "/#/PokerRoom?roomId=" + room.id;
+	(0, _helperMethods.setStorageItem)("roomId", room.id);
 	(0, _helperMethods.setStorageItem)("participantId", participant.id);
 };
 
@@ -450,9 +453,14 @@ var PokerRoom = function (_React$Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
+			var roomId = this.props.room.id || (0, _helperMethods.getStorageItem)("roomId");
+			var participantId = this.props.participant.id || (0, _helperMethods.getStorageItem)("participantId");
+
+			if ((0, _lodash.isEmpty)(roomId) || (0, _lodash.isEmpty)(participantId)) return;
+
 			this.props.subscribe({
-				roomId: this.props.room.id,
-				participantId: this.props.participant.id
+				roomId: roomId,
+				participantId: participantId
 			});
 
 			if ((0, _lodash.isEmpty)(this.refs.txtItemName)) return;
@@ -466,7 +474,7 @@ var PokerRoom = function (_React$Component) {
 		key: 'shouldComponentUpdate',
 		value: function shouldComponentUpdate(nextProps) {
 			// Only update if properties have changed
-			// Normally use '===' comparison but updates could be sync from server
+			// Normally use '===' comparison but updates could be sync from server so objects won't be same
 			if (!(0, _lodash.isEqual)(this.props.room, nextProps.room) || !(0, _lodash.isEqual)(this.props.participant, nextProps.participant)) {
 				return true;
 			}
@@ -675,6 +683,8 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -684,6 +694,8 @@ var _reactRedux = require('react-redux');
 var _lodash = require('lodash');
 
 var _helperMethods = require('../utilities/helperMethods');
+
+var _constants = require('../utilities/constants');
 
 var _actions = require('../actions');
 
@@ -697,65 +709,118 @@ var _JoinRoom2 = _interopRequireDefault(_JoinRoom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * end of the URL so it can link to your browser history correctly or something I've never needed to use.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * So I threw it out 3 projects ago and now I use my own version.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * It takes a string value for the current page from a reducer that updates when the window.hash changes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * so every time you use window.location it updates which page is rendered. Uses the same /#/ work-around as
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * It also doubles up as a bouncer for apps that require login of sorts (like this one)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Just subscribe it to whichever reducer tracks your logged-on status ('participant' in this case) and redirect
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * as necessary when that status changes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
 var mapStateToProps = function mapStateToProps(_ref) {
 	var page = _ref.page,
-	    participant = _ref.participant;
+	    participant = _ref.participant,
+	    requests = _ref.requests;
 
 	return {
 		page: page,
-		participant: participant
+		participant: participant,
+		requests: requests
 	};
-}; /**
-    * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the
-    * end of the URL so it can link to your browser history correctly or something I've never needed to use.
-    * So I threw it out 3 projects ago and now I use my own version.
-    *
-    * It takes a string value for the current page from a reducer that updates when the window.hash changes
-    * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as
-    * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
-    *
-    * It also doubles up as a bouncer for apps that require login of sorts (like this one)
-    * Just subscribe it to whichever reducer tracks your logged-on status ('participant' in this case) and redirect
-    * as necessary when that status changes
-    */
+};
 
-
-var Router = function Router(_ref2) {
+var authCheck = function authCheck(_ref2) {
 	var page = _ref2.page,
-	    participant = _ref2.participant;
+	    participant = _ref2.participant,
+	    requests = _ref2.requests;
 
-	console.log(page);
-	if ((0, _lodash.isEmpty)(participant.id)) {
-		if (!(0, _lodash.isEqual)(page, "JoinRoom")) {
-			if ((0, _lodash.isEqual)(page, "PokerRoom")) {
-				var roomId = (0, _helperMethods.getQueryParam)("roomId");
-				var participantId = (0, _helperMethods.getStorageItem)("participantId");
-
-				if (!(0, _lodash.isEmpty)(roomId) && !(0, _lodash.isEmpty)(participantId)) {
-					console.log("Sending joinRoom request");
-					_actions.apiRequests.joinRoom({ roomId: roomId, participantId: participantId });
-				}
+	if ((0, _lodash.isEmpty)(participant)) {
+		var roomId = (0, _helperMethods.getStorageItem)("roomId");
+		var participantId = (0, _helperMethods.getStorageItem)("participantId");
+		console.log("Storage:", roomId, participantId);
+		// If mounting after a page refresh and details were stored in session storage
+		if (!(0, _lodash.isEmpty)(roomId) && !(0, _lodash.isEmpty)(participantId)) {
+			console.log("Sending joinRoom request");
+			// Attempt to re-join same room again
+			if ((0, _lodash.isEqual)(requests.joinRoom, _constants.REQUEST_STATES.READY)) {
+				_actions.apiRequests.joinRoom({ roomId: roomId, participantId: participantId });
 			}
-
+			// If details were not stored and joinRoom request isn't busy
+		} else if ((0, _lodash.isEqual)(page, "PokerRoom") && !(0, _lodash.isEqual)(requests.joinRoom, _constants.REQUEST_STATES.BUSY)) {
+			// Boot to the log in screen
 			window.location = "/#/JoinRoom";
 		}
+	} else {
+		if ((0, _lodash.isEqual)(page, "JoinRoom")) {
+			window.location = "/#/PokerRoom";
+		}
+	}
+};
+
+var Router = function (_React$Component) {
+	_inherits(Router, _React$Component);
+
+	function Router(props) {
+		_classCallCheck(this, Router);
+
+		return _possibleConstructorReturn(this, (Router.__proto__ || Object.getPrototypeOf(Router)).call(this, props));
 	}
 
-	var pages = {
-		PokerRoom: _react2.default.createElement(_PokerRoom2.default, null),
-		JoinRoom: _react2.default.createElement(_JoinRoom2.default, null)
-	};
+	_createClass(Router, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			authCheck(this.props);
+		}
+	}, {
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			authCheck(this.props);
+		}
+	}, {
+		key: 'shouldComponentUpdate',
+		value: function shouldComponentUpdate(nextProps) {
+			if (!(0, _lodash.isEqual)(nextProps.page, this.props.page) || !(0, _lodash.isEqual)(nextProps.participant, this.props.participant) || !(0, _lodash.isEqual)(nextProps.requests, this.props.requests)) {
+				return true;
+			}
+			return false;
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			var page = this.props.page;
 
-	return pages[page] || _react2.default.createElement(
-		'div',
-		{ style: { marginTop: 100, textAlign: "center" } },
-		'Page Not Found'
-	);
-};
+			console.log(page);
+
+			var pages = {
+				PokerRoom: _react2.default.createElement(_PokerRoom2.default, null),
+				JoinRoom: _react2.default.createElement(_JoinRoom2.default, null)
+			};
+
+			return pages[page] || _react2.default.createElement(
+				'div',
+				{ style: { marginTop: 100, textAlign: "center" } },
+				'Page Not Found'
+			);
+		}
+	}]);
+
+	return Router;
+}(_react2.default.Component);
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Router);
 
-},{"../actions":3,"../utilities/helperMethods":15,"./JoinRoom":5,"./PokerRoom":6,"lodash":82,"react":261,"react-redux":230}],8:[function(require,module,exports){
+},{"../actions":3,"../utilities/constants":14,"../utilities/helperMethods":15,"./JoinRoom":5,"./PokerRoom":6,"lodash":82,"react":261,"react-redux":230}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -881,11 +946,13 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
-var init = {
-	joinRoom: "ready",
-	createRoom: "ready",
-	leaveRoom: "ready"
-};
+var _constants = require('../utilities/constants');
+
+var init = {};
+
+(0, _lodash.forEach)((0, _lodash.keys)(_constants.API_ENDPOINTS), function (apiEndpoint) {
+	init[apiEndpoint] = _constants.REQUEST_STATES.READY;
+});
 
 var requests = function requests() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
@@ -906,7 +973,7 @@ var requests = function requests() {
 
 exports.default = requests;
 
-},{"lodash":82,"redux":267}],12:[function(require,module,exports){
+},{"../utilities/constants":14,"lodash":82,"redux":267}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1028,7 +1095,7 @@ function getSocket() {
 exports.default = {
 
 	sendRequest: function sendRequest(requestName, requestObject) {
-		_reducers.store.dispatch({ type: "SET_REQUEST_STATE", requestName: requestName, requestState: "BUSY" });
+		_reducers.store.dispatch({ type: "SET_REQUEST_STATE", requestName: requestName, requestState: _constants.REQUEST_STATES.BUSY });
 
 		request.post(_constants.API_ENDPOINTS[requestName]).send(requestObject).end(function (err, res) {
 			if (!res) {
@@ -1039,7 +1106,7 @@ exports.default = {
 
 			var requestState = void 0;
 			if (err) {
-				requestState = "FAILED";
+				requestState = _constants.REQUEST_STATES.FAILED;
 
 				var errorMessage = _constants.ERROR_MESSAGES[requestName] ? _constants.ERROR_MESSAGES[requestName][res.status] : null;
 				if (errorMessage) _reducers.store.dispatch({ type: "ADD_ERRORS", errorMessages: errorMessage });
@@ -1047,7 +1114,7 @@ exports.default = {
 				var handler = _actions.apiResponses[requestName + "Error"];
 				if (handler) handler(err, res, errorMessage);
 			} else {
-				requestState = "READY";
+				requestState = _constants.REQUEST_STATES.READY;
 
 				var _handler = _actions.apiResponses[requestName + "Response"];
 				if (_handler) _handler(res);
@@ -1091,9 +1158,16 @@ var ERROR_MESSAGES = {
 	}
 };
 
+var REQUEST_STATES = {
+	BUSY: "BUSY",
+	FAILED: "FAILED",
+	READY: "READY"
+};
+
 exports.API_ENDPOINTS = API_ENDPOINTS;
 exports.CARDS = CARDS;
 exports.ERROR_MESSAGES = ERROR_MESSAGES;
+exports.REQUEST_STATES = REQUEST_STATES;
 
 },{}],15:[function(require,module,exports){
 'use strict';

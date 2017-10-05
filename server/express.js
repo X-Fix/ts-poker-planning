@@ -31,7 +31,7 @@ _.forEach(_.keys(expressRoutes), (routeName) => {
 			expressRoutes[routeName](req, res);
 		} catch (e) {
 			errorHandler.handle(e, {response: res});
-			console.log(e.type, e.message, e.status, e.stack);
+			console.log(e.type, e.message, e.status, e.stack||"");
 		}
 	})
 });

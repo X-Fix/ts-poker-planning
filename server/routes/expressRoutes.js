@@ -68,37 +68,72 @@ const expressRoutes = {
 	},
 
 	joinRoom: function(req, res) {
-		const roomName = req.body.roomName,
-			participantName = req.body.participantName;
+		console.log("Join room RQ:", req.body);
 
-		const roomId = dbi.getRoomId(roomName);
+		const {
+			participantName,
+			participantId,
+			roomName,
+			roomId=dbi.getRoomId(roomName)
+		 } = req.body;
+
+		 console.log("Join room vars:", participantId, roomId);
+
 		if (_.isEmpty(roomId)) {
-			throw {
-				type: "STATUS",
-				message: "No room found with that name",
-				status: HTTP_STATUS.NOT_FOUND
-			};
+			// If no roomName provided in RQ then neither identifier was provided in RQ which is bad
+			if (_.isEmpty(roomName)) {
+				throw {
+					type: "STATUS",
+					message: "No valid room identifier provided",
+					status: HTTP_STATUS.BAD_REQUEST
+				};
+			// if roomName WAS provided in RQ but roomId still not found, invalid roomName provided
+			} else {
+				throw {
+					type: "STATUS",
+					message: "No room found with that name",
+					status: HTTP_STATUS.NOT_FOUND
+				};
+			}
 		}
 
 		let room = dbi.checkOutRoom(roomId);
+		let returnParticipant;
 
-		_.forEach(room.participants, (participant) => {
-			if (_.isEqual(participant.name.toLowerCase(), participantName.toLowerCase())) {
-				dbi.checkInRoom(roomId);
+		if (!_.isEmpty(participantId)) {
+			returnParticipant = _.find(room.participants, { id: participantId });
+			if (_.isEmpty(returnParticipant)) {
 				throw {
 					type: "STATUS",
-					message: "A participant with that name already exists in this room",
-					status: HTTP_STATUS.CONFLICT
+					message: "No participant with that id exists in this room",
+					status: HTTP_STATUS.NOT_FOUND
 				};
 			}
-		});
-		
-		const newParticipant = new Participant(participantName);
-		room.participants.push(newParticipant);
+		} else if (!_.isEmpty(participantName)) {
+			_.forEach(room.participants, (participant) => {
+				// TODO remove toLowerCase() once FE handles case and capitalisation (BE should not alter data)
+				if (_.isEqual(participant.name.toLowerCase(), participantName.toLowerCase())) {
+					dbi.checkInRoom(roomId);
+					throw {
+						type: "STATUS",
+						message: "A participant with that name already exists in this room",
+						status: HTTP_STATUS.CONFLICT
+					};
+				}
+			});
+			returnParticipant = new Participant(participantName);
+			room.participants.push(returnParticipant);
+		} else {
+			throw {
+				type: "STATUS",
+				message: "No valid participant identifier provided",
+				status: HTTP_STATUS.BAD_REQUEST
+			};
+		}
 
 		res.json({
 			room: room,
-			participant: newParticipant,
+			participant: returnParticipant,
 			timeStamp: Date.now()
 		});
 
