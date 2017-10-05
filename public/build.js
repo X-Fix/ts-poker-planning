@@ -11,8 +11,6 @@ var _apiInterface = require('../utilities/apiInterface');
 
 var _apiInterface2 = _interopRequireDefault(_apiInterface);
 
-var _helperMethods = require('../utilities/helperMethods');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
@@ -42,7 +40,7 @@ exports.default = {
 	}
 };
 
-},{"../reducers":8,"../utilities/apiInterface":13,"../utilities/helperMethods":15}],2:[function(require,module,exports){
+},{"../reducers":8,"../utilities/apiInterface":13}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

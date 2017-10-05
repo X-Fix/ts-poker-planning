@@ -1,6 +1,5 @@
 import { store } from '../reducers';
 import apiInterface from '../utilities/apiInterface';
-import { getCurrentRoute } from '../utilities/helperMethods';
 
 export default {
 
