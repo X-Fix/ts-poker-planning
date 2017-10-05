@@ -10,7 +10,7 @@ io.on("connection", function(socket) {
 
     _.forEach(_.keys(socketRoutes), (routeName) => {
         socket.on(routeName, (data) => {
-        	
+
         	switch (routeName) {
         		case "subscribe":
         			_roomId = data.roomId;

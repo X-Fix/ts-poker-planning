@@ -1,41 +1,40 @@
 import { store } from '../reducers';
 import apiInterface from '../utilities/apiInterface';
+import { setStorageItem } from '../utilities/helperMethods';
 
 function identifyForFullstory(responseBody) {
 	if (!window.FS) return;
-	const { participant, room } = responseBody;
+
+	const { room, participant } = responseBody;
 	FS.identify(participant.id, {
 		displayName: participant.name,
-		roomName: room.name,
-		isOwner: room.ownerId === participant.id
+		roomName_str: room.name,
+		isOwner_bool: room.ownerId === participant.id
 	});
 }
 
+function joinRoom(response) {
+	store.dispatch({
+		type: "JOIN_ROOM",
+		payload: response.body
+	});
+	identifyForFullstory(response.body);
+
+	const { room, participant } = response.body;
+
+	window.location = "/#/PokerRoom?roomId="+room.id;
+	setStorageItem("participantId", participant.id);
+};
+
 export default {
 
-	joinRoomResponse: function(response) {
-		store.dispatch({
-			type: "JOIN_ROOM",
-			payload: response.body
-		});
-		window.location = "/#/PokerRoom";
-
-		identifyForFullstory(response.body);
-	},
+	joinRoomResponse: joinRoom,
 
 	joinRoomError: function(error, response, message) {
 		alert(message);
 	},
 
-	createRoomResponse: function(response) {
-		store.dispatch({
-			type: "CREATE_ROOM",
-			payload: response.body
-		});
-		window.location = "/#/PokerRoom";
-
-		identifyForFullstory(response.body);
-	},
+	createRoomResponse: joinRoom,
 
 	createRoomError: function(error, response, message) {
 		alert(message);

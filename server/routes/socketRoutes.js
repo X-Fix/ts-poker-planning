@@ -2,6 +2,8 @@ const _ = require("lodash");
 const dbi = require("../utilities/databaseInterface");
 const HTTP_STATUS = require('../utilities/constants').HTTP_STATUS;
 const ERRORS = require('../utilities//constants').ERRORS;
+const TIME_OUTS = require('../utilities//constants').TIME_OUTS;
+const sleep = require('../utilities/helperMethods').sleep;
 
 function syncRoom(io, room) {
 	console.log("[" + room.name + "] synced");
@@ -33,6 +35,19 @@ function checkParticipantIsRoomOwner(participantId, room) {
 	}
 }
 
+function cleanUpEmptyRoom(room) {
+	dbi.checkInRoom(room.id);
+
+	console.log("Waiting "+TIME_OUTS.EMPTY_ROOM+"ms...");
+	sleep(TIME_OUTS.EMPTY_ROOM);
+	if (room.participants.length === 0) {
+		console.log("Deleting room");
+		dbi.deleteRoom(room.id);
+		return true;
+	}
+	return false;
+}
+
 const socketRoutes = {
 
 	subscribe: function({ roomId, participantId }, socket, io) {
@@ -40,7 +55,7 @@ const socketRoutes = {
 		let participant = getParticipant(participantId, room);
 
 		participant.socketId = socket.conn.id;
-    	
+
     	console.log(participantId + " (" + socket.conn.id + ") joined room [" + roomId + "]");
 
     	socket.join(roomId);
@@ -110,26 +125,26 @@ const socketRoutes = {
         console.log("User disconnected from: [" + roomId + "] ("+socketId+")");
 
         const participant = _.find(room.participants, {socketId: socketId});
-		if (_.isEmpty(participant)) return;		
+		if (_.isEmpty(participant)) return;
 
 		room.participants = _.filter(room.participants, (participant) => {
 			return !_.isEqual(socketId, participant.socketId);
 		});
 
-		if (room.participants.length === 0) {
-			dbi.deleteRoom(roomId);
-			console.log("Room deleted ["+roomId+"]");
-			return;
-		}
+		const roomOwnerLeft = _.isEqual(participant.id, room.ownerId);
+		const roomIsEmpty = room.participants.length === 0;
 
-		if (_.isEqual(participant.id, room.ownerId)) {
-			room.ownerId = room.participants[0].id;
+		if (roomOwnerLeft) {
+			if (roomIsEmpty) {
+				room.ownerId = null;
+			} else {
+				room.ownerId = room.participants[0].id;
+			}
 		}
 
 		syncRoom(io, room);
 		dbi.checkInRoom(roomId);
 	}
-	
 }
 
 module.exports = socketRoutes;

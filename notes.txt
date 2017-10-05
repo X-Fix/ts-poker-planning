@@ -1,0 +1,5 @@
+ - Ideas for copy/pasting URL for [Feature] Join room using shared URL:
+	https://stackoverflow.com/questions/36051883/how-to-select-all-text-in-input-with-reactjs-when-it-focused
+ - Does Express use multiple threads by default?
+ - How to spawn new threads
+ - How to create async task runners (delete room when empty after 5s)

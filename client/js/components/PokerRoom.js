@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { find, isEmpty, isEqual, map } from 'lodash';
 import { apiRequests } from '../actions';
 import { CARDS } from '../utilities/constants';
+import { getQueryParam } from '../utilities/helperMethods';
 
 const Item = (itemName) => {
 	return {

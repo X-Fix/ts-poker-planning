@@ -5,7 +5,9 @@ import { API_ENDPOINTS, ERROR_MESSAGES } from './constants';
 import { apiResponses } from '../actions';
 
 request
-.set({"X-Clacks-Overhead": "GNU Terry Pratchett"});
+.set({
+	"X-Clacks-Overhead": "GNU Terry Pratchett"
+});
 
 var socket;
 function getSocket() {
@@ -26,28 +28,28 @@ export default {
 		.send(requestObject)
 		.end(function (err, res) {
 			if (!res) {
-				store.dispatch({type:"ADD_ERRORS", errorMessages: "Request has been terminated\nPlease check your internet connection and try again."});
-				store.dispatch({type:"FAIL_PENDING_REQUESTS"});
+				store.dispatch({type: "ADD_ERRORS", errorMessages: "Request has been terminated\nPlease check your internet connection and try again."});
+				store.dispatch({type: "FAIL_PENDING_REQUESTS"});
 				return;
 			}
-	
+
 			let requestState;
 			if (err) {
 				requestState = "FAILED";
-	
+
 				let errorMessage = ERROR_MESSAGES[requestName] ? ERROR_MESSAGES[requestName][res.status] : null;
-				if (errorMessage) store.dispatch({type:"ADD_ERRORS", errorMessages: errorMessage});
-	
+				if (errorMessage) store.dispatch({type: "ADD_ERRORS", errorMessages: errorMessage});
+
 				let handler = apiResponses[requestName+"Error"];
 				if (handler) handler(err, res, errorMessage);
 			} else {
 				requestState = "READY";
-	
+
 				let handler = apiResponses[requestName+"Response"];
 				if (handler) handler(res);
 			}
-	
-			store.dispatch({type:"SET_REQUEST_STATE", requestName: requestName, requestState: requestState});
+
+			store.dispatch({type: "SET_REQUEST_STATE", requestName: requestName, requestState: requestState});
 		})
 	},
 

@@ -15,3 +15,8 @@ module.exports.ERRORS = {
 	SERVER_ERROR: 3,
 	DB_ERROR: 4
 };
+
+module.exports.TIME_OUTS = {
+	EMPTY_ROOM: 5000,
+	LOCKED_ROOM: 1000
+};

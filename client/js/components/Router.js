@@ -1,10 +1,10 @@
 /**
- * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the 
+ * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the
  * end of the URL so it can link to your browser history correctly or something I've never needed to use.
  * So I threw it out 3 projects ago and now I use my own version.
- * 
+ *
  * It takes a string value for the current page from a reducer that updates when the window.hash changes
- * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as 
+ * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as
  * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
  *
  * It also doubles up as a bouncer for apps that require login of sorts (like this one)
@@ -14,20 +14,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { isEmpty, isEqual } from 'lodash';
+import { getStorageItem, getQueryParam } from '../utilities/helperMethods';
+import { apiRequests } from '../actions';
 import PokerRoom from './PokerRoom';
 import JoinRoom from './JoinRoom';
 
 const mapStateToProps = ({ page, participant }) => {
-	return { 
+	return {
 		page,
 		participant
 	}
 }
 
 const Router = ({ page, participant }) => {
-
+console.log(page);
 	if (isEmpty(participant.id)){
 		if (!isEqual(page, "JoinRoom")) {
+			if (isEqual(page, "PokerRoom")) {
+				const roomId = getQueryParam("roomId");
+				const participantId = getStorageItem("participantId");
+
+				if (!isEmpty(roomId) && !isEmpty(participantId)) {
+					console.log("Sending joinRoom request");
+					apiRequests.joinRoom({roomId, participantId});
+				}
+			}
+
 			window.location = "/#/JoinRoom";
 		}
 	}
@@ -36,7 +48,7 @@ const Router = ({ page, participant }) => {
 		PokerRoom: <PokerRoom />,
 		JoinRoom: <JoinRoom />
 	}
-	
+
 	return pages[page] || <div style={{marginTop: 100, textAlign: "center"}} >Page Not Found</div>;
 }
 

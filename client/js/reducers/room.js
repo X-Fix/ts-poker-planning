@@ -35,12 +35,11 @@ const room = (state = init, {type, payload}) => {
 	let newProps = {};
 
 	switch (type) {
-		case "CREATE_ROOM":
 		case "JOIN_ROOM":
 		case "SYNC_ROOM":
 			return payload.room;
 		case "CREATE_ITEM":
-			
+
 			newProps.participants = map(state.participants, (participant) => {
 				return assign({}, participant, { itemScore: null });
 			});
@@ -75,5 +74,5 @@ const room = (state = init, {type, payload}) => {
 	}
 	return state ;
 }
- 
+
 export default room;

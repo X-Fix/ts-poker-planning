@@ -1,7 +1,8 @@
 import { assign } from 'lodash';
-import { createStore } from 'redux'
+import { createStore } from 'redux';
+import { getCurrentRoute } from '../utilities/helperMethods';
 
-const init = "Home";
+const init = getCurrentRoute();
 
 const page = (state = init, {type, payload}) => {
 	switch (type) {
@@ -12,5 +13,5 @@ const page = (state = init, {type, payload}) => {
 	}
 	return state ;
 }
- 
+
 export default page;

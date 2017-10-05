@@ -53,45 +53,48 @@ var _apiInterface = require('../utilities/apiInterface');
 
 var _apiInterface2 = _interopRequireDefault(_apiInterface);
 
+var _helperMethods = require('../utilities/helperMethods');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function identifyForFullstory(responseBody) {
 	if (!window.FS) return;
-	var participant = responseBody.participant,
-	    room = responseBody.room;
+
+	var room = responseBody.room,
+	    participant = responseBody.participant;
 
 	FS.identify(participant.id, {
 		displayName: participant.name,
-		roomName: room.name,
-		isOwner: room.ownerId === participant.id
+		roomName_str: room.name,
+		isOwner_bool: room.ownerId === participant.id
 	});
 }
 
+function joinRoom(response) {
+	_reducers.store.dispatch({
+		type: "JOIN_ROOM",
+		payload: response.body
+	});
+	identifyForFullstory(response.body);
+
+	var _response$body = response.body,
+	    room = _response$body.room,
+	    participant = _response$body.participant;
+
+
+	window.location = "/#/PokerRoom?roomId=" + room.id;
+	(0, _helperMethods.setStorageItem)("participantId", participant.id);
+};
+
 exports.default = {
 
-	joinRoomResponse: function joinRoomResponse(response) {
-		_reducers.store.dispatch({
-			type: "JOIN_ROOM",
-			payload: response.body
-		});
-		window.location = "/#/PokerRoom";
-
-		identifyForFullstory(response.body);
-	},
+	joinRoomResponse: joinRoom,
 
 	joinRoomError: function joinRoomError(error, response, message) {
 		alert(message);
 	},
 
-	createRoomResponse: function createRoomResponse(response) {
-		_reducers.store.dispatch({
-			type: "CREATE_ROOM",
-			payload: response.body
-		});
-		window.location = "/#/PokerRoom";
-
-		identifyForFullstory(response.body);
-	},
+	createRoomResponse: joinRoom,
 
 	createRoomError: function createRoomError(error, response, message) {
 		alert(message);
@@ -118,7 +121,7 @@ exports.default = {
 	}
 };
 
-},{"../reducers":8,"../utilities/apiInterface":13}],3:[function(require,module,exports){
+},{"../reducers":8,"../utilities/apiInterface":13,"../utilities/helperMethods":15}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -363,6 +366,8 @@ var _lodash = require('lodash');
 var _actions = require('../actions');
 
 var _constants = require('../utilities/constants');
+
+var _helperMethods = require('../utilities/helperMethods');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -663,7 +668,7 @@ var PokerRoom = function (_React$Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PokerRoom);
 
-},{"../actions":3,"../utilities/constants":14,"lodash":82,"react":261,"react-redux":230}],7:[function(require,module,exports){
+},{"../actions":3,"../utilities/constants":14,"../utilities/helperMethods":15,"lodash":82,"react":261,"react-redux":230}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -677,6 +682,10 @@ var _react2 = _interopRequireDefault(_react);
 var _reactRedux = require('react-redux');
 
 var _lodash = require('lodash');
+
+var _helperMethods = require('../utilities/helperMethods');
+
+var _actions = require('../actions');
 
 var _PokerRoom = require('./PokerRoom');
 
@@ -697,12 +706,12 @@ var mapStateToProps = function mapStateToProps(_ref) {
 		participant: participant
 	};
 }; /**
-    * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the 
+    * So ReactRouter documentation sucks giant balls and the library adds some bullshit '?k=stupidhashthingy' to the
     * end of the URL so it can link to your browser history correctly or something I've never needed to use.
     * So I threw it out 3 projects ago and now I use my own version.
-    * 
+    *
     * It takes a string value for the current page from a reducer that updates when the window.hash changes
-    * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as 
+    * so every time you window.location it updates which page is rendered. USes the same /#/ work-around as
     * React(stupid)Router to stop you actually redirecting anywhere (this is an SPA after all)
     *
     * It also doubles up as a bouncer for apps that require login of sorts (like this one)
@@ -715,9 +724,19 @@ var Router = function Router(_ref2) {
 	var page = _ref2.page,
 	    participant = _ref2.participant;
 
-
+	console.log(page);
 	if ((0, _lodash.isEmpty)(participant.id)) {
 		if (!(0, _lodash.isEqual)(page, "JoinRoom")) {
+			if ((0, _lodash.isEqual)(page, "PokerRoom")) {
+				var roomId = (0, _helperMethods.getQueryParam)("roomId");
+				var participantId = (0, _helperMethods.getStorageItem)("participantId");
+
+				if (!(0, _lodash.isEmpty)(roomId) && !(0, _lodash.isEmpty)(participantId)) {
+					console.log("Sending joinRoom request");
+					_actions.apiRequests.joinRoom({ roomId: roomId, participantId: participantId });
+				}
+			}
+
 			window.location = "/#/JoinRoom";
 		}
 	}
@@ -736,7 +755,7 @@ var Router = function Router(_ref2) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Router);
 
-},{"./JoinRoom":5,"./PokerRoom":6,"lodash":82,"react":261,"react-redux":230}],8:[function(require,module,exports){
+},{"../actions":3,"../utilities/helperMethods":15,"./JoinRoom":5,"./PokerRoom":6,"lodash":82,"react":261,"react-redux":230}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -782,7 +801,9 @@ var _lodash = require('lodash');
 
 var _redux = require('redux');
 
-var init = "Home";
+var _helperMethods = require('../utilities/helperMethods');
+
+var init = (0, _helperMethods.getCurrentRoute)();
 
 var page = function page() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : init;
@@ -801,7 +822,7 @@ var page = function page() {
 
 exports.default = page;
 
-},{"lodash":82,"redux":267}],10:[function(require,module,exports){
+},{"../utilities/helperMethods":15,"lodash":82,"redux":267}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -826,8 +847,6 @@ var participant = function participant() {
 	if (payload !== undefined && payload.timestamp !== undefined && lastTimestamp > payload.timestamp) return state;
 
 	switch (type) {
-		case "CREATE_ROOM":
-			return payload.participant;
 		case "JOIN_ROOM":
 			return payload.participant;
 		case "LEAVE_ROOM":
@@ -934,7 +953,6 @@ var room = function room() {
 	var newProps = {};
 
 	switch (type) {
-		case "CREATE_ROOM":
 		case "JOIN_ROOM":
 		case "SYNC_ROOM":
 			return payload.room;
@@ -994,7 +1012,9 @@ var request = require('superagent-defaults')();
 var io = require('socket.io-client');
 
 
-request.set({ "X-Clacks-Overhead": "GNU Terry Pratchett" });
+request.set({
+	"X-Clacks-Overhead": "GNU Terry Pratchett"
+});
 
 var socket;
 function getSocket() {
@@ -1092,7 +1112,7 @@ var _constants = require('./constants');
 /**
  * Route Parser
  * Detects which page component the router.js component should be serving based on the hash value. Hash value is used rather
- * than actual routes as single page applications technically only have one route. Using hash routes at all allows us to retain 
+ * than actual routes as single page applications technically only have one route. Using hash routes at all allows us to retain
  * use of the browser history object.
  */
 var getCurrentRoute = exports.getCurrentRoute = function getCurrentRoute() {
@@ -1128,18 +1148,18 @@ var getRequestName = exports.getRequestName = function getRequestName(url) {
 };
 
 /**
- * localStorage Manager
- * localStorage isn't always accessible (private browsing, no space, etc) so these methods test if localStorage is available and
+ * sessionStorage Manager
+ * sessionStorage isn't always accessible (private browsing, no space, etc) so these methods test if sessionStorage is available and
  * if not, fall back an a pojo stored here
  */
 var backUpStorage = {};
 var setStorageItem = exports.setStorageItem = function setStorageItem(key, value) {
 	if (value === undefined || value === null) {
-		localStorage.removeItem(key);
+		sessionStorage.removeItem(key);
 		backUpStorage[key] = undefined;
 	} else {
 		try {
-			localStorage.setItem(key, value);
+			sessionStorage.setItem(key, value);
 		} catch (e) {
 			backUpStorage[key] = value;
 		}
@@ -1148,7 +1168,7 @@ var setStorageItem = exports.setStorageItem = function setStorageItem(key, value
 
 var getStorageItem = exports.getStorageItem = function getStorageItem(key) {
 	try {
-		return localStorage.getItem(key);
+		return sessionStorage.getItem(key);
 	} catch (e) {
 		return backUpStorage[key];
 	}
@@ -1156,7 +1176,7 @@ var getStorageItem = exports.getStorageItem = function getStorageItem(key) {
 
 /**
  * Mixed Text Sorter
- * When sorting strings, numbers are sorted lexicographically (by position, ie. by digit, from left-to-right eg. 1, 11, 12, 2, 21 Instead of 1, 2, 11, 12, 21) 
+ * When sorting strings, numbers are sorted lexicographically (by position, ie. by digit, from left-to-right eg. 1, 11, 12, 2, 21 Instead of 1, 2, 11, 12, 21)
  * This method looks out for numbers in a string and, if the substring before the numbers is identical, sorts by the integer values of the number.
  * This function assumes that all objects in the array are of the same type as the first.
  */

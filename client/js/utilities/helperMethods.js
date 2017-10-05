@@ -4,10 +4,10 @@ import { API_ENDPOINTS } from './constants';
 /**
  * Route Parser
  * Detects which page component the router.js component should be serving based on the hash value. Hash value is used rather
- * than actual routes as single page applications technically only have one route. Using hash routes at all allows us to retain 
+ * than actual routes as single page applications technically only have one route. Using hash routes at all allows us to retain
  * use of the browser history object.
  */
-export const getCurrentRoute = () => { 
+export const getCurrentRoute = () => {
 	const hash = window.location.hash;
 	if (hash === "") return "PokerRoom";
 	if (hash.indexOf("/", 2) === -1) return hash.substring(2, hash.substring(2).includes("?") ? hash.indexOf("?") : hash.length) || "PokerRoom";
@@ -41,18 +41,18 @@ export const getRequestName = (url) => {
 }
 
 /**
- * localStorage Manager
- * localStorage isn't always accessible (private browsing, no space, etc) so these methods test if localStorage is available and
+ * sessionStorage Manager
+ * sessionStorage isn't always accessible (private browsing, no space, etc) so these methods test if sessionStorage is available and
  * if not, fall back an a pojo stored here
  */
 let backUpStorage = {}
 export const setStorageItem = (key, value) => {
 	if (value === undefined || value === null) {
-		localStorage.removeItem(key);
+		sessionStorage.removeItem(key);
 		backUpStorage[key] = undefined;
 	} else {
 		try {
-			localStorage.setItem(key, value);
+			sessionStorage.setItem(key, value);
 		} catch (e) {
 			backUpStorage[key] = value;
 		}
@@ -61,7 +61,7 @@ export const setStorageItem = (key, value) => {
 
 export const getStorageItem = (key) => {
 	try {
-		return localStorage.getItem(key);
+		return sessionStorage.getItem(key);
 	} catch (e) {
 		return backUpStorage[key];
 	}
@@ -70,7 +70,7 @@ export const getStorageItem = (key) => {
 
 /**
  * Mixed Text Sorter
- * When sorting strings, numbers are sorted lexicographically (by position, ie. by digit, from left-to-right eg. 1, 11, 12, 2, 21 Instead of 1, 2, 11, 12, 21) 
+ * When sorting strings, numbers are sorted lexicographically (by position, ie. by digit, from left-to-right eg. 1, 11, 12, 2, 21 Instead of 1, 2, 11, 12, 21)
  * This method looks out for numbers in a string and, if the substring before the numbers is identical, sorts by the integer values of the number.
  * This function assumes that all objects in the array are of the same type as the first.
  */
