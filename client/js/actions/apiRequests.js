@@ -13,7 +13,6 @@ export default {
 	},
 
 	subscribe: function(requestObject) {
-		console.log("Subscribing:", getCurrentRoute(), window.location);
 		apiInterface.makeSocketRequest("subscribe", requestObject);
 	},
 

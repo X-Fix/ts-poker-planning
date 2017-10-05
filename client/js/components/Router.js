@@ -32,10 +32,9 @@ const authCheck = ({ page, participant, requests }) => {
 	if (isEmpty(participant)){
 		const roomId = getStorageItem("roomId");
 		const participantId = getStorageItem("participantId");
-console.log("Storage:", roomId, participantId);
+
 		// If mounting after a page refresh and details were stored in session storage
 		if (!isEmpty(roomId) && !isEmpty(participantId)) {
-			console.log("Sending joinRoom request");
 			// Attempt to re-join same room again
 			if (isEqual(requests.joinRoom, REQUEST_STATES.READY)) {
 				apiRequests.joinRoom({roomId, participantId});
@@ -50,6 +49,11 @@ console.log("Storage:", roomId, participantId);
 			window.location = "/#/PokerRoom";
 		}
 	}
+}
+
+const pages = {
+	PokerRoom: <PokerRoom />,
+	JoinRoom: <JoinRoom />
 }
 
 class Router extends React.Component {
@@ -77,12 +81,6 @@ class Router extends React.Component {
 
 	render() {
 		const { page } = this.props;
-		console.log(page);
-
-		const pages = {
-			PokerRoom: <PokerRoom />,
-			JoinRoom: <JoinRoom />
-		}
 
 		return pages[page] || <div style={{marginTop: 100, textAlign: "center"}} >Page Not Found</div>;
 	}

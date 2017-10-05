@@ -26,7 +26,6 @@ exports.default = {
 	},
 
 	subscribe: function subscribe(requestObject) {
-		console.log("Subscribing:", (0, _helperMethods.getCurrentRoute)(), window.location);
 		_apiInterface2.default.makeSocketRequest("subscribe", requestObject);
 	},
 
@@ -748,10 +747,9 @@ var authCheck = function authCheck(_ref2) {
 	if ((0, _lodash.isEmpty)(participant)) {
 		var roomId = (0, _helperMethods.getStorageItem)("roomId");
 		var participantId = (0, _helperMethods.getStorageItem)("participantId");
-		console.log("Storage:", roomId, participantId);
+
 		// If mounting after a page refresh and details were stored in session storage
 		if (!(0, _lodash.isEmpty)(roomId) && !(0, _lodash.isEmpty)(participantId)) {
-			console.log("Sending joinRoom request");
 			// Attempt to re-join same room again
 			if ((0, _lodash.isEqual)(requests.joinRoom, _constants.REQUEST_STATES.READY)) {
 				_actions.apiRequests.joinRoom({ roomId: roomId, participantId: participantId });
@@ -766,6 +764,11 @@ var authCheck = function authCheck(_ref2) {
 			window.location = "/#/PokerRoom";
 		}
 	}
+};
+
+var pages = {
+	PokerRoom: _react2.default.createElement(_PokerRoom2.default, null),
+	JoinRoom: _react2.default.createElement(_JoinRoom2.default, null)
 };
 
 var Router = function (_React$Component) {
@@ -800,12 +803,6 @@ var Router = function (_React$Component) {
 		value: function render() {
 			var page = this.props.page;
 
-			console.log(page);
-
-			var pages = {
-				PokerRoom: _react2.default.createElement(_PokerRoom2.default, null),
-				JoinRoom: _react2.default.createElement(_JoinRoom2.default, null)
-			};
 
 			return pages[page] || _react2.default.createElement(
 				'div',
