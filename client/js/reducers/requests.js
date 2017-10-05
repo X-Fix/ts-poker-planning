@@ -9,11 +9,13 @@ forEach(keys(API_ENDPOINTS), apiEndpoint => {
 });
 
 const requests = (state = init, {type, payload}) => {
+
+	let newState = {};
+
 	switch (type) {
-		case "SET_REQUEST_STATUS":
-			let newState;
+		case "SET_REQUEST_STATE":
 			newState[payload.requestName] = payload.requestStatus;
-			return assing({}, newState, state);
+			return assign({}, newState, state);
 		default:
 			return state;
 	}

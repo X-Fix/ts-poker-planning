@@ -16,6 +16,7 @@ function Room(roomName, cardType) {
             dateCreated: Date.now()
         },
         participants: [],
+        lurkers: [],
         allParticipantsDone: function() {
 	    	for (let i=0; i<this.participants.length; i++) {
 				if (this.participants[i].itemScore === null) {
@@ -68,16 +69,12 @@ const expressRoutes = {
 	},
 
 	joinRoom: function(req, res) {
-		console.log("Join room RQ:", req.body);
-
 		const {
 			participantName,
 			participantId,
 			roomName,
 			roomId=dbi.getRoomId(roomName)
 		 } = req.body;
-
-		 console.log("Join room vars:", participantId, roomId);
 
 		if (_.isEmpty(roomId)) {
 			// If no roomName provided in RQ then neither identifier was provided in RQ which is bad
@@ -97,17 +94,33 @@ const expressRoutes = {
 			}
 		}
 
-		let room = dbi.checkOutRoom(roomId);
+		let room = dbi.checkOutRoom(roomId, "joinRoom");
 		let returnParticipant;
 
 		if (!_.isEmpty(participantId)) {
+			// Look for participant in room.participants
 			returnParticipant = _.find(room.participants, { id: participantId });
+			// If not found...
 			if (_.isEmpty(returnParticipant)) {
-				throw {
-					type: "STATUS",
-					message: "No participant with that id exists in this room",
-					status: HTTP_STATUS.NOT_FOUND
-				};
+				// Look for participant in room.lurkers and remove from that list if found
+				returnParticipant = _.remove(room.lurkers, { id: participantId })[0];
+				// If found in lurkers...
+				if (!_.isEmpty(returnParticipant)) {
+					// Add back to room.participants collection
+					room.participants = _.concat(room.participants, returnParticipant);
+					// If the only participant in colloection...
+					if (_.isEqual(room.participants.length, 1)) {
+						// Set this participant as owner of the room
+						room.ownerId = returnParticipant.id;
+					}
+				// If not found in room.lurkers either...
+				} else {
+					throw {
+						type: "STATUS",
+						message: "No participant with that id exists in this room",
+						status: HTTP_STATUS.NOT_FOUND
+					};
+				}
 			}
 		} else if (!_.isEmpty(participantName)) {
 			_.forEach(room.participants, (participant) => {

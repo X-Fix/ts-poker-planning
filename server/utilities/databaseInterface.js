@@ -24,13 +24,13 @@ const db = {
         return null;
     },
 
-    checkOutRoom: function(roomId) {
+    checkOutRoom: function(roomId, fn) {
         const room = _rooms[roomId];
 
         if (room === undefined) {
             throw {
                 type: ERRORS.CLIENT_ERROR,
-                message: "Invalid roomId for 'checkOutRoom' ("+roomId+") " + _rooms,
+                message: "Invalid roomId for 'checkOutRoom' ("+roomId+") " + fn,
                 status: HTTP_STATUS.BAD_REQUEST
             };
         }

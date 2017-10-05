@@ -954,11 +954,13 @@ var requests = function requests() {
 	var type = _ref.type,
 	    payload = _ref.payload;
 
+
+	var newState = {};
+
 	switch (type) {
-		case "SET_REQUEST_STATUS":
-			var newState = void 0;
+		case "SET_REQUEST_STATE":
 			newState[payload.requestName] = payload.requestStatus;
-			return assing({}, newState, state);
+			return (0, _lodash.assign)({}, newState, state);
 		default:
 			return state;
 	}
@@ -1089,12 +1091,25 @@ function getSocket() {
 exports.default = {
 
 	sendRequest: function sendRequest(requestName, requestObject) {
-		_reducers.store.dispatch({ type: "SET_REQUEST_STATE", requestName: requestName, requestState: _constants.REQUEST_STATES.BUSY });
+		_reducers.store.dispatch({
+			type: "SET_REQUEST_STATE",
+			payload: {
+				requestName: requestName,
+				requestState: _constants.REQUEST_STATES.BUSY
+			}
+		});
 
 		request.post(_constants.API_ENDPOINTS[requestName]).send(requestObject).end(function (err, res) {
 			if (!res) {
-				_reducers.store.dispatch({ type: "ADD_ERRORS", errorMessages: "Request has been terminated\nPlease check your internet connection and try again." });
-				_reducers.store.dispatch({ type: "FAIL_PENDING_REQUESTS" });
+				_reducers.store.dispatch({
+					type: "ADD_ERRORS",
+					payload: {
+						errorMessages: "Request has been terminated\nPlease check your internet connection and try again."
+					}
+				});
+				_reducers.store.dispatch({
+					type: "FAIL_PENDING_REQUESTS"
+				});
 				return;
 			}
 
@@ -1114,7 +1129,13 @@ exports.default = {
 				if (_handler) _handler(res);
 			}
 
-			_reducers.store.dispatch({ type: "SET_REQUEST_STATE", requestName: requestName, requestState: requestState });
+			_reducers.store.dispatch({
+				type: "SET_REQUEST_STATE",
+				payload: {
+					requestName: requestName,
+					requestState: requestState
+				}
+			});
 		});
 	},
 

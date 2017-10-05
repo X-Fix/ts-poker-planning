@@ -17,6 +17,6 @@ module.exports.ERRORS = {
 };
 
 module.exports.TIME_OUTS = {
-	EMPTY_ROOM: 30000,
+	EMPTY_ROOM: 2000,
 	LOCKED_ROOM: 1000
 };
