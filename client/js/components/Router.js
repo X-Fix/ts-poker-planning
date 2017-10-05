@@ -80,9 +80,7 @@ class Router extends React.Component {
 	}
 
 	render() {
-		const { page } = this.props;
-
-		return pages[page] || <div style={{marginTop: 100, textAlign: "center"}} >Page Not Found</div>;
+		return pages[this.props.page] || <div style={{marginTop: 100, textAlign: "center"}} >Page Not Found</div>;
 	}
 }
 

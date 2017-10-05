@@ -801,10 +801,7 @@ var Router = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var page = this.props.page;
-
-
-			return pages[page] || _react2.default.createElement(
+			return pages[this.props.page] || _react2.default.createElement(
 				'div',
 				{ style: { marginTop: 100, textAlign: "center" } },
 				'Page Not Found'
