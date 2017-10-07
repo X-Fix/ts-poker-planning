@@ -14,7 +14,6 @@ const requests = (state = init, {type, payload}) => {
 
 	switch (type) {
 		case "SET_REQUEST_STATE":
-			console.log("Setting request state", payload);
 			newState[payload.requestName] = payload.requestState;
 			return assign({}, state, newState);
 		default:
