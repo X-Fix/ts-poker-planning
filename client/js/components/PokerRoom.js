@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { find, isEmpty, isEqual, map } from 'lodash';
 import { apiRequests } from '../api';
+import { itemActions, participantActions } from '../actionCreators';
 import { CARDS } from '../utilities/constants';
 import { getStorageItem } from '../utilities/helperMethods';
 
@@ -32,24 +33,15 @@ const mapDispatchToProps = (dispatch) => {
 		subscribe: apiRequests.subscribe,
 		createItem: (object) => {
 			apiRequests.createItem(object);
-			dispatch({
-				type: "CREATE_ITEM",
-				payload: object
-			});
+			dispatch(itemActions.createItem(object));
 		},
 		setItemScore: (object) =>{
 			apiRequests.setItemScore(object);
-			dispatch({
-				type: "SET_ITEM_SCORE",
-				payload: object
-			});
+			dispatch(itemActions.setItemScore(object));
 		},
 		kickParticipant: (object) => {
 			apiRequests.kickParticipant(object);
-			dispatch({
-				type: "KICK_PARTICIPANT",
-				payload: object
-			});
+			dispatch(participantActions.kickParticipant(object));
 		}
 	};
 };

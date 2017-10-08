@@ -1,10 +1,10 @@
 import { store } from '../reducers';
+import { roomActions } from '../actionCreators';
 import { setStorageItem } from '../utilities/helperMethods';
 
-function identifyForFullstory(responseBody) {
+function identifyForFullstory(room, participant) {
 	if (!window.FS) return;
 
-	const { room, participant } = responseBody;
 	FS.identify(participant.id, {
 		displayName: participant.name,
 		roomName_str: room.name,
@@ -13,14 +13,10 @@ function identifyForFullstory(responseBody) {
 }
 
 function joinRoom(response) {
-	store.dispatch({
-		type: "JOIN_ROOM",
-		payload: response.body
-	});
-	identifyForFullstory(response.body);
-
 	const { room, participant } = response.body;
 
+	store.dispatch(roomActions.joinRoom({ room, participant }));
+	identifyForFullstory(room, participant);
 	setStorageItem("roomId", room.id);
 	setStorageItem("participantId", participant.id);
 };
@@ -46,14 +42,8 @@ export default {
 	/*
 		Socket messages
 	 */
-	serverSync: function(data) {
-		store.dispatch({
-			type: "SYNC_ROOM",
-			payload: {
-				room: data.room,
-				timestamp: data.timestamp
-			}
-		});
+	serverSync: function({ room, timestamp }) {
+		store.dispatch(roomActions.syncRoom({ room, timestamp }));
 	},
 
 	error: function(data) {
