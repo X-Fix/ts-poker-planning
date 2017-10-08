@@ -1,5 +1,4 @@
 import { store } from '../reducers';
-import apiInterface from '../utilities/apiInterface';
 import { setStorageItem } from '../utilities/helperMethods';
 
 function identifyForFullstory(responseBody) {

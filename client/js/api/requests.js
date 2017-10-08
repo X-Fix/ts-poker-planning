@@ -1,5 +1,4 @@
-import { store } from '../reducers';
-import apiInterface from '../utilities/apiInterface';
+import apiInterface from './apiInterface';
 
 export default {
 

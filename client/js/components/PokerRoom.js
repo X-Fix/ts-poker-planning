@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { find, isEmpty, isEqual, map } from 'lodash';
-import { apiRequests } from '../actions';
+import { apiRequests } from '../api';
 import { CARDS } from '../utilities/constants';
 import { getStorageItem } from '../utilities/helperMethods';
 
