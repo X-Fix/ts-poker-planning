@@ -4,7 +4,7 @@ export default {
 
 	createItem: function(payload) {
 		return {
-			type: "JOIN_ROOM",
+			type: "CREAT_ITEM",
 			payload: payload
 		};
 	},
