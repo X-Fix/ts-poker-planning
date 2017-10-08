@@ -9,7 +9,6 @@ let _rooms = {};
 const db = {
 
     getRoomId: function(roomName) {
-        console.log(roomName);
         if (_.isEmpty(roomName)) return null;
 
         const roomIds = _.keys(_rooms);

@@ -27,6 +27,9 @@ function joinRoom(response) {
 
 export default {
 
+	/*
+		HTTP responses
+	 */
 	joinRoomResponse: joinRoom,
 
 	joinRoomError: function(error, response, message) {
@@ -38,7 +41,11 @@ export default {
 	createRoomError: function(error, response, message) {
 		alert(message);
 	},
+	/***/
 
+	/*
+		Socket messages
+	 */
 	serverSync: function(data) {
 		store.dispatch({
 			type: "SYNC_ROOM",
@@ -58,4 +65,5 @@ export default {
 			alert(data.message);
 		}
 	}
+	/***/
 }
