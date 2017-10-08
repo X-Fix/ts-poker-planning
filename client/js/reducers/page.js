@@ -1,5 +1,3 @@
-import { assign } from 'lodash';
-import { createStore } from 'redux';
 import { getCurrentRoute } from '../utilities/helperMethods';
 
 const init = getCurrentRoute();
