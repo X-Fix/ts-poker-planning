@@ -1,9 +1,23 @@
+.room-name-header {
+    width: 100%;
+    height: 50px;
+    font-size: 30px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.room-name-header:hover {
+    text-decoration: underline;
+}
+
 .poker-cards-container {
     width: 62%;
     position: absolute;
     top: 0;
     left: 0;
-    margin: 2%;
+    margin: 10px 2%;
 }
 
 .poker-card {
@@ -17,7 +31,7 @@
     cursor: pointer;
     border-radius: 10px;
     box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, .5);
-    -webkit-user-select: none; /* Chrome/Safari */        
+    -webkit-user-select: none; /* Chrome/Safari */
     -moz-user-select: none; /* Firefox */
 }
 

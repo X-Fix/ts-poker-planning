@@ -6,7 +6,7 @@ const ModalWrapper = ({ isOpen, onClose, title, children }) => {
 
 	return (
 		<div className={modalClassName}>
-			<div className="modal__backdrop">
+			<div className="modal__backdrop" onClick={onClose}>
 				<div className="modal__container">
 					<div className="modal__title">{title}</div>
 					<div className="modal__close-button glyph remove" onClick={onClose} />
