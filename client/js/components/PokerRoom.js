@@ -5,6 +5,7 @@ import { apiRequests } from '../api';
 import { itemActions, participantActions } from '../actionCreators';
 import { CARDS } from '../utilities/constants';
 import { getStorageItem } from '../utilities/helperMethods';
+import { ShareLinkModal } from './modals';
 
 const Item = (itemName) => {
 	return {
@@ -243,6 +244,7 @@ class PokerRoom extends React.Component {
 					<div className="participant-panel__header">{"Current item: " + (itemEmpty ? "None" : this.props.room.item.name)}</div>
 					{ participantComponents }
 				</div>
+				<ShareLinkModal />
 			</div>
 		);
     }

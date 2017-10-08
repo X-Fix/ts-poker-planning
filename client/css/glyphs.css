@@ -1,10 +1,10 @@
 @font-face{
 	font-family:'Glyphicons Halflings';
 	src:url('fonts/glyphicons-halflings-regular.eot');
-	src:url('fonts/glyphicons-halflings-regular.eot?#iefix') 
+	src:url('fonts/glyphicons-halflings-regular.eot?#iefix')
 	format('embedded-opentype'),
-	
-	url('fonts/glyphicons-halflings-regular.ttf') 
+
+	url('fonts/glyphicons-halflings-regular.ttf')
 	format('truetype')
 }
 
@@ -13,14 +13,18 @@
 	margin: 0 0.2em;
 }
 
-.glyph.tower:before {
-    content: "\e184";
-}
-
 .glyph.chevron-right:before {
     content: "\e080";
 }
 
 .glyph.ok:before {
     content: "\e013";
+}
+
+.glyph.remove:before {
+	content: "\e014";
+}
+
+.glyph.tower:before {
+    content: "\e184";
 }

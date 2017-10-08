@@ -2,7 +2,7 @@ import { assign } from 'lodash';
 
 const init = {};
 
-const page = (state = init, {type, payload}) => {
+const reducer = (state = init, {type, payload}) => {
 	let newState = {};
 	switch (type) {
 		case "ACTION_NAME":
@@ -14,4 +14,4 @@ const page = (state = init, {type, payload}) => {
 	return state ;
 }
 
-export default page;
+export default reducer;
