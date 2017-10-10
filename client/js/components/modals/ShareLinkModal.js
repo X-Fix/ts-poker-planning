@@ -30,6 +30,9 @@ class ShareLinkModal extends React.Component {
 	}
 
 	componentDidUpdate(prevProps) {
+		// onModalOpen
+		// set textElement.value to the joinRoom link
+		// select() the text in preparation of copy
 		if (!prevProps.shareLinkModalIsOpen && this.props.shareLinkModalIsOpen) {
 			const shareLinkElement = document.getElementById("txtShareLinkText");
 			shareLinkElement.value = window.location.origin + "/#/JoinRoom?autoJoinRoom="+this.props.roomId;
