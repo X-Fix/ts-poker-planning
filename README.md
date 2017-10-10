@@ -58,12 +58,9 @@ before publishing to production server
 ## Roadmap/Todos
 
 - Add Tests and Linter
-- [Feature] Join room using shared URL
 - [Feature] "Leave Room" button
 - Add leaveRoom to onWindowClose event handler
-- Add room name to Poker Room page
 - Formulate and implement a design scheme (desktop and mobile)
-- Store details in session storage on login
 - Encrypt socket connections
 - Handle dropped/prematurely closed connections
 - Control change in strategy (websocket/polling)
