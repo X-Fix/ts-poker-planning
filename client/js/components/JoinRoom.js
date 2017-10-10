@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { isEmpty, keys, map } from 'lodash';
 import { apiRequests } from '../api';
 import { CARDS } from '../utilities/constants';
+import { getQueryParam } from '../utilities/helperMethods';
 
 const mapStateToProps = ({ requests }) => {
 	return {
@@ -23,12 +24,16 @@ class JoinRoom extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.state = {
+			autoJoinRoomName: getQueryParam("autoJoinRoomName")
+		};
+
 		this.joinRoom = this.joinRoom.bind(this);
 		this.createRoom = this.createRoom.bind(this);
 	}
 
 	componentDidMount() {
-		this.refs.txtRoomName.addEventListener('keyup', function (event) {
+		this.refs.txtParticipantName.addEventListener('keyup', function (event) {
 			if (event.keyCode === 13) {
 				event.preventDefault();
 				this.joinRoom();
@@ -40,7 +45,7 @@ class JoinRoom extends React.Component {
 	// A participant is created with the given name
 	joinRoom() {
 		const participantName = this.refs.txtParticipantName.value,
-			roomName = this.refs.txtRoomName.value;
+			roomName = this.state.autoJoinRoomName || this.refs.txtRoomName.value;
 
 		if (isEmpty(participantName) || isEmpty(roomName)) return;
 
@@ -76,14 +81,34 @@ class JoinRoom extends React.Component {
 
 		return (
 			<div className="join-room-container">
-				<input className="txt participant-name" ref="txtParticipantName" type="text" placeholder="Your name" label="Your name" tabIndex="1" autoFocus />
-				<input className="txt room-name" ref="txtRoomName" type="text" placeholder="Room name" label="Room name" tabIndex="2" />
+				{
+					isEmpty(this.state.autoJoinRoomName) ?
+					<div>
+						<label className="lbl room-name">Room Name</label>
+						<input className="txt room-name" ref="txtRoomName" type="text" placeholder="Room name" tabIndex="1" autoFocus />
+						<label className="lbl participant-name">Your Name</label>
+						<input className="txt participant-name" ref="txtParticipantName" type="text" placeholder="Your name" tabIndex="2" />
+					</div>
+					:
+					<div>
+						<label className="lbl room-name">Room Name</label>
+						<div className="dsply room-name">{this.state.autoJoinRoomName}</div>
+						<label className="lbl participant-name">Your Name</label>
+						<input className="txt participant-name" ref="txtParticipantName" type="text" placeholder="Your name" tabIndex="2" autoFocus />
+					</div>
+				}
 				<div className="btn join-room" tabIndex="3" onClick={this.joinRoom}>Join Room</div>
-				<div className="btn create-room" tabIndex="4" onClick={this.createRoom}>Create Room</div>
-				<label className="lbl card-type" htmlFor="ddCardType">Card Type:</label>
-				<select className="dd card-type" ref="ddCardType" name="ddCardType">
-					{ cardTypeOptions }
-				</select>
+				{
+					isEmpty(this.state.autoJoinRoomName) ?
+					<div>
+						<div className="btn create-room" tabIndex="4" onClick={this.createRoom}>Create Room</div>
+						<label className="lbl card-type" htmlFor="ddCardType">Card Type:</label>
+						<select className="dd card-type" ref="ddCardType" name="ddCardType">
+							{ cardTypeOptions }
+						</select>
+					</div>
+					: null
+				}
 			</div>
 		);
 	}

@@ -7,7 +7,7 @@ import ModalWrapper from './ModalWrapper';
 const mapStateToProps = ({ modals, room }) => {
 	return {
 		shareLinkModalIsOpen: modals.shareLinkModalIsOpen,
-		roomId: room.id
+		roomName: room.name
 	}
 }
 
@@ -35,7 +35,7 @@ class ShareLinkModal extends React.Component {
 		// select() the text in preparation of copy
 		if (!prevProps.shareLinkModalIsOpen && this.props.shareLinkModalIsOpen) {
 			const shareLinkElement = document.getElementById("txtShareLinkText");
-			shareLinkElement.value = window.location.origin + "/#/JoinRoom?autoJoinRoom="+this.props.roomId;
+			shareLinkElement.value = window.location.origin + "/#/JoinRoom?autoJoinRoomName="+encodeURI(this.props.roomName);
 			shareLinkElement.select();
 		}
 	}

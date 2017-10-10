@@ -25,7 +25,7 @@ export const getQueryParam = (search) => {
 	let searchStart = str.includes("?"+search) ? str.indexOf("?"+search+"=")+search.length+2 : str.indexOf("&"+search+"=")+search.length+2,
 		searchEnd = str.indexOf("&", searchStart);
 
-	return str.substring(searchStart, searchEnd > 0 ? searchEnd : str.length);
+	return decodeURI(str.substring(searchStart, searchEnd > 0 ? searchEnd : str.length));
 }
 
 /**
