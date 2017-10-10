@@ -1,4 +1,4 @@
-import { forEach, filter, findIndex } from 'lodash';
+import { forEach, filter, findIndex, isEmpty } from 'lodash';
 import { API_ENDPOINTS } from './constants';
 
 /**
@@ -20,12 +20,12 @@ export const getCurrentRoute = () => {
  */
 export const getQueryParam = (search) => {
 	let str = window.location.hash || window.location.search;
-	if (!search || !str.includes(search)) return;
+	if (!search || !str.includes(search)) return null;
 
 	let searchStart = str.includes("?"+search) ? str.indexOf("?"+search+"=")+search.length+2 : str.indexOf("&"+search+"=")+search.length+2,
 		searchEnd = str.indexOf("&", searchStart);
 
-	return str.substring(searchStart, searchEnd > 0 ? searchEnd : str.length);
+	return decodeURI(str.substring(searchStart, searchEnd > 0 ? searchEnd : str.length));
 }
 
 /**
@@ -47,7 +47,7 @@ export const getRequestName = (url) => {
  */
 let backUpStorage = {}
 export const setStorageItem = (key, value) => {
-	if (value === undefined || value === null) {
+	if (isEmpty(value)) {
 		sessionStorage.removeItem(key);
 		backUpStorage[key] = undefined;
 	} else {

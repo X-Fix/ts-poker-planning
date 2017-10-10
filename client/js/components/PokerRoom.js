@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { find, isEmpty, isEqual, map } from 'lodash';
-import { apiRequests } from '../actions';
+import { apiRequests } from '../api';
+import { itemActions, modalActions, participantActions } from '../actionCreators';
 import { CARDS } from '../utilities/constants';
 import { getStorageItem } from '../utilities/helperMethods';
+import { ShareLinkModal } from './modals';
 
 const Item = (itemName) => {
 	return {
@@ -32,24 +34,20 @@ const mapDispatchToProps = (dispatch) => {
 		subscribe: apiRequests.subscribe,
 		createItem: (object) => {
 			apiRequests.createItem(object);
-			dispatch({
-				type: "CREATE_ITEM",
-				payload: object
-			});
+			dispatch(itemActions.createItem(object));
 		},
 		setItemScore: (object) =>{
 			apiRequests.setItemScore(object);
-			dispatch({
-				type: "SET_ITEM_SCORE",
-				payload: object
-			});
+			dispatch(itemActions.setItemScore(object));
 		},
 		kickParticipant: (object) => {
 			apiRequests.kickParticipant(object);
-			dispatch({
-				type: "KICK_PARTICIPANT",
-				payload: object
-			});
+			dispatch(participantActions.kickParticipant(object));
+		},
+		openShareLinkModal: () => {
+			dispatch(modalActions.openModal({
+				modalName: "shareLink"
+			}));
 		}
 	};
 };
@@ -211,20 +209,24 @@ class PokerRoom extends React.Component {
 	// Dependencies = [cardComponent, participantComponent]
 	render() {
 
+		const { room, participant } = this.props;
 		// Card components generated from a list of values in the selected CARDS constant
 		// CARDS constant selected using same value selected when creating the room
-		const cardComponents = map(CARDS[this.props.room.cardType], this.makeCardComponent);
+		const cardComponents = map(CARDS[room.cardType], this.makeCardComponent);
 		// Participant components generated from the list of participants subscribed to the room
-		const participantComponents = map(this.props.room.participants, this.makeParticipantComponent);
+		const participantComponents = map(room.participants, this.makeParticipantComponent);
 
 		// Various boolean values used to determine wether to show relevant element or not
-		const isOwner = isEqual(this.props.participant.id, this.props.room.ownerId);
-		const itemEmpty = isEmpty(this.props.room.item.name);
-		const itemLocked = itemEmpty ? true : this.props.room.item.isLocked;
+		const isOwner = isEqual(participant.id, room.ownerId);
+		const itemEmpty = isEmpty(room.item.name);
+		const itemLocked = itemEmpty ? true : room.item.isLocked;
 
 		return (
 			<div>
 				<div className="poker-cards-container">
+					<div className="room-name-header" onClick={this.props.openShareLinkModal}>
+						{room.name}
+					</div>
 					{ cardComponents }
 					{
 						isOwner ?
@@ -248,9 +250,10 @@ class PokerRoom extends React.Component {
 					}
 				</div>
 				<div className="participant-panel">
-					<div className="participant-panel__header">{"Current item: " + (itemEmpty ? "None" : this.props.room.item.name)}</div>
+					<div className="participant-panel__header">{"Current item: " + (itemEmpty ? "None" : room.item.name)}</div>
 					{ participantComponents }
 				</div>
+				<ShareLinkModal />
 			</div>
 		);
     }

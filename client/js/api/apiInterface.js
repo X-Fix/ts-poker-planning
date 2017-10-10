@@ -1,8 +1,8 @@
 const request = require('superagent-defaults')();
 const io = require('socket.io-client');
 import { store } from '../reducers';
-import { API_ENDPOINTS, ERROR_MESSAGES, REQUEST_STATES } from './constants';
-import { apiResponses } from '../actions';
+import { API_ENDPOINTS, ERROR_MESSAGES, REQUEST_STATES } from '../utilities/constants';
+import apiResponses from './responses';
 
 request
 .set({

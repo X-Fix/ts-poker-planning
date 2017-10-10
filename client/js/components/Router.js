@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { isEmpty, isEqual } from 'lodash';
 import { getStorageItem } from '../utilities/helperMethods';
 import { REQUEST_STATES } from '../utilities/constants';
-import { apiRequests } from '../actions';
+import { apiRequests } from '../api';
 import PokerRoom from './PokerRoom';
 import JoinRoom from './JoinRoom';
 

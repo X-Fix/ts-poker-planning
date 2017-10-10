@@ -1,1 +1,7 @@
 /node_modules
+
+/public/build.js
+/public/index.html
+/public/style.css
+
+notes.txt
