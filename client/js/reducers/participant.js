@@ -25,6 +25,7 @@ const participant = (state = init, {type, payload}) => {
 		case "SYNC_ROOM":
 			let participant = find(payload.room.participants, {id: state.id});
 			if (isEmpty(participant)) {
+				// TODO: Remove and place elsewhere. Reducers must be pure functions
 				setStorageItem("participantId", null);
 				return init
 			} else if (!isEqual(participant, state)) {
