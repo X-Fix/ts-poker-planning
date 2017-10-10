@@ -1,5 +1,6 @@
 import { assign, find, isEmpty, isEqual } from 'lodash';
 import { createStore } from 'redux'
+import { setStorageItem } from '../utilities/helperMethods';
 
 const init = {};
 
@@ -24,6 +25,7 @@ const participant = (state = init, {type, payload}) => {
 		case "SYNC_ROOM":
 			let participant = find(payload.room.participants, {id: state.id});
 			if (isEmpty(participant)) {
+				setStorageItem("participantId", null);
 				return init
 			} else if (!isEqual(participant, state)) {
 				return participant;
