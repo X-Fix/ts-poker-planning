@@ -13,7 +13,7 @@ Fork and clone, pretty straightforward
 
 ### Prerequisites
 
-Node and a MacBook. Haven't had a chance to test if the run/build scripts work on other OS's, any testing/contribution would be appreaciated.
+Node and a MacBook. Haven't had a chance to test if the run/build scripts work on other OS's, any testing/contribution would be appreciated.
 
 Installing Node with HomeBrew
 
@@ -48,7 +48,7 @@ lol
 
 ## Deployment
 
-run the following 
+run the following
 
 ```
 npm run build-production
@@ -63,7 +63,7 @@ before publishing to production server
 - Add leaveRoom to onWindowClose event handler
 - Add room name to Poker Room page
 - Formulate and implement a design scheme (desktop and mobile)
-- Store details in session storage on login 
+- Store details in session storage on login
 - Encrypt socket connections
 - Handle dropped/prematurely closed connections
 - Control change in strategy (websocket/polling)
