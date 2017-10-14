@@ -1,6 +1,6 @@
 {
   "name": "poker-planning-server",
-  "version": "2.3.5",
+  "version": "2.3.7",
   "description": "Poker planning",
   "main": "index.js",
   "babel": {
@@ -22,7 +22,6 @@
     "watch": "concurrently --kill-others \"npm run js-watch\" \"npm run css-watch\" \"npm run html-watch\" \"sleep 5s && npm run nodemon\""
   },
   "dependencies": {
-    "body-parser": "~1.17.2",
     "bufferutil": "~3.0.2",
     "compression": "~1.7.0",
     "express": "~4.16.2",

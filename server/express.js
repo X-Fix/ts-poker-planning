@@ -1,10 +1,8 @@
 const _ = require("lodash");
 const path = require("path");
-const bodyParser = require('body-parser');
 const compression = require('compression');
 const express = require("express");
 const app = express();
-const router = express.Router();
 const expressRoutes = require('./routes/expressRoutes');
 const errorHandler = require('./utilities/errorHandler');
 const PRODUCTION = (process.env.NODE_ENV === "production");
@@ -16,8 +14,8 @@ function serveIndex(req, res) {
 
 app.use(compression());
 app.use(express.static("public", { index: false }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.get("/", serveIndex);
 
 _.forEach(_.keys(expressRoutes), (routeName) => {
@@ -30,8 +28,5 @@ _.forEach(_.keys(expressRoutes), (routeName) => {
 		}
 	})
 });
-
-//app.post("/createRoom", expressRoutes.createRoom);
-//app.post("/joinRoom", expressRoutes.joinRoom);
 
 module.exports = app;
