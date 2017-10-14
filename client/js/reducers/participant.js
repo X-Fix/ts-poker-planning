@@ -25,7 +25,7 @@ const participant = (state = init, {type, payload}) => {
 		case "SYNC_ROOM":
 			// Only return new participant object if syncRoom changes affected this participant
 			if (!isEqual(payload.participant, state)) {
-				return participant;
+				return payload.participant;
 			}
 		default:
 			return state;
