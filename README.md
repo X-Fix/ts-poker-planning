@@ -44,7 +44,7 @@ In develop environment the express server doesn't cache static files so no need 
 
 ## Running the tests
 
-lol
+[![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://cypress.io) coming soon...
 
 ## Deployment
 
