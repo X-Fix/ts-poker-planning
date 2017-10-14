@@ -58,7 +58,6 @@ before publishing to production server
 ## Roadmap/Todos
 
 - Add Tests and Linter
-- Migrate to React 0.16.0
 - [Feature] "Leave Room" button
 - [Feature] "Remember me" option
 - Add leaveRoom to onWindowClose event handler
