@@ -45,7 +45,9 @@ fs.readFile('client/html/index.html', 'utf-8', function (err, data) {
 					.replace("<!-- ReplaceStyleSheet -->", config.styleSheet)
 					.replace("<!-- ReplaceTitle -->", config.title);
 
-	fs.writeFile('public/index.html', newValue, 'utf-8', function (err) {
+	var filePath = args[0] === "production" ? "public/index.html" : "public/index.dev.html";
+
+	fs.writeFile(filePath, newValue, 'utf-8', function (err) {
 		if (err) throw err;
 	});
 });

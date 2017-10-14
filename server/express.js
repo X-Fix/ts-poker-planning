@@ -7,23 +7,18 @@ const app = express();
 const router = express.Router();
 const expressRoutes = require('./routes/expressRoutes');
 const errorHandler = require('./utilities/errorHandler');
-
-app.use(compression());
-app.use(express.static("public"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const PRODUCTION = (process.env.NODE_ENV === "production");
 
 function serveIndex(req, res) {
-	res.sendFile(path.join(__dirname, "../public/index.html"));
+	const indexFileName = PRODUCTION ? "index.html" : "index.dev.html";
+	res.sendFile(path.join(__dirname, "../public", indexFileName));
 }
 
-// If production, use static file caching
-// Else allow for file updates to reflect without restarting server
-if (process.env.NODE_ENV === "production") {
-	app.get("/", serveIndex);
-} else {
-	router.get("/", serveIndex);
-}
+app.use(compression());
+app.use(express.static("public", { index: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.get("/", serveIndex);
 
 _.forEach(_.keys(expressRoutes), (routeName) => {
 	app.post("/"+routeName, (req, res) => {
@@ -36,7 +31,7 @@ _.forEach(_.keys(expressRoutes), (routeName) => {
 	})
 });
 
-app.post("/createRoom", expressRoutes.createRoom);
-app.post("/joinRoom", expressRoutes.joinRoom);
+//app.post("/createRoom", expressRoutes.createRoom);
+//app.post("/joinRoom", expressRoutes.joinRoom);
 
 module.exports = app;
