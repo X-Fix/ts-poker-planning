@@ -23,18 +23,14 @@ const participant = (state = init, {type, payload}) => {
 		case "SET_ITEM_SCORE":
 			return assign({}, state, { itemScore: payload.itemScore });
 		case "SYNC_ROOM":
-			let participant = find(payload.room.participants, {id: state.id});
-			if (isEmpty(participant)) {
-				// TODO: Remove and place elsewhere. Reducers must be pure functions
-				setStorageItem("participantId", null);
-				return init
-			} else if (!isEqual(participant, state)) {
+			// Only return new participant object if syncRoom changes affected this participant
+			if (!isEqual(payload.participant, state)) {
 				return participant;
 			}
 		default:
 			return state;
 	}
-	return state ;
+	return state;
 }
 
 export default participant;

@@ -61,9 +61,9 @@ const socketRoutes = {
     	dbi.checkInRoom(roomId);
 	},
 
-	createItem: function({ roomId, participantId, item }, socket, io) {
+	createItem: function({ roomId, actingParticipantId, item }, socket, io) {
 		const room = dbi.checkOutRoom(roomId, "createItem");
-		checkParticipantIsRoomOwner(participantId, room);
+		checkParticipantIsRoomOwner(actingParticipantId, room);
 
 		room.item = item;
 
@@ -71,15 +71,15 @@ const socketRoutes = {
 			participant.itemScore = null;
 		});
 
-		console.log(participantId + " (" + socket.conn.id + ") created a new item (" + item.name + ") for room [" + roomId +"]");
+		console.log(actingParticipantId + " (" + socket.conn.id + ") created a new item (" + item.name + ") for room [" + roomId +"]");
 
 		syncRoom(io, room);
 		dbi.checkInRoom(roomId);
 	},
 
-	setItemScore: function({ roomId, participantId, itemScore }, socket, io) {
+	setItemScore: function({ roomId, actingParticipantId, itemScore }, socket, io) {
 		let room = dbi.checkOutRoom(roomId, "setItemScore");
-		let participant = getParticipant(participantId, room);
+		let participant = getParticipant(actingParticipantId, room);
 
 		participant.itemScore = itemScore;
 
@@ -87,33 +87,35 @@ const socketRoutes = {
 			room.item.isLocked = true;
 		}
 
-		console.log(participantId + " (" + socket.conn.id + ") set their item value (" + room.item.name + " - " + itemScore + ") for room [" + roomId +"]");
+		console.log(actingParticipantId + " (" + socket.conn.id + ") set their item value (" + room.item.name + " - " + itemScore + ") for room [" + roomId +"]");
 
 		syncRoom(io, room);
 		dbi.checkInRoom(roomId);
 	},
 
-	kickParticipant: function({ roomId, participantId, targetId }, socket, io) {
+	kickParticipant: function({ roomId, actingParticipantId, targetParticipantId, targetParticipantSocketId }, socket, io) {
 		let room = dbi.checkOutRoom(roomId, "kickParticipant");
-		checkParticipantIsRoomOwner(participantId, room);
+		checkParticipantIsRoomOwner(actingParticipantId, room);
 
-		if (_.isEqual(targetId, room.ownerId)) {
+		if (_.isEqual(targetParticipantId, room.ownerId)) {
 			dbi.checkInRoom(roomId);
 			throw {
 	            type: ERRORS.CLIENT_ERROR,
-	            message: "Kick target cannot be room owner",
+	            message: "Kick-target cannot be room owner",
 	            status: HTTP_STATUS.FORBIDDEN
 	        };
 		}
 
 		room.participants = _.filter(room.participants, (participant) => {
-			return !_.isEqual(targetId, participant.id);
+			return !_.isEqual(targetParticipantId, participant.id);
 		});
 
-		console.log(participantId + " (" + socket.conn.id + ") kicked " + targetId + " from room [" + roomId + "]");
+		console.log(actingParticipantId + " (" + socket.conn.id + ") kicked " + targetParticipantId + " from room [" + roomId + "]");
 
 		syncRoom(io, room);
 		dbi.checkInRoom(roomId);
+		// Unsubscribe targetParticipant from socket updates AFTER sending "you've been kicked" update to targetParticipant
+		io.sockets.connected[targetParticipantSocketId].leave(roomId);
 	},
 
 	disconnect: function({ roomId }, socket, io) {

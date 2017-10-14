@@ -110,7 +110,7 @@ class PokerRoom extends React.Component {
 
 		this.props.createItem({
 			roomId: this.props.room.id,
-			participantId: this.props.participant.id,
+			actingParticipantId: this.props.participant.id,
 			item: new Item(itemName)
 		});
 	}
@@ -123,7 +123,7 @@ class PokerRoom extends React.Component {
 
 		this.props.setItemScore({
 			roomId: this.props.room.id,
-			participantId: this.props.participant.id,
+			actingParticipantId: this.props.participant.id,
 			itemScore: itemScore
 		});
 	}
@@ -131,14 +131,16 @@ class PokerRoom extends React.Component {
 	// Remove target participant from room
 	// Event only accessible to room owner
 	kickParticipant(event) {
-		const targetId = event.target.dataset.value;
-
 		if (!isEqual(this.props.room.ownerId, this.props.participant.id)) return;
+
+		const targetParticipantId = event.target.dataset.value;
+		const targetParticipant = find(this.props.room.participants, { id: targetParticipantId });
 
 		this.props.kickParticipant({
 			roomId: this.props.room.id,
-			participantId: this.props.participant.id,
-			targetId: targetId
+			actingParticipantId: this.props.participant.id,
+			targetParticipantId: targetParticipantId,
+			targetParticipantSocketId: targetParticipant.socketId
 		});
 	}
 

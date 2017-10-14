@@ -58,12 +58,15 @@ before publishing to production server
 ## Roadmap/Todos
 
 - Add Tests and Linter
+- Migrate to React 0.16.0
 - [Feature] "Leave Room" button
+- [Feature] "Remember me" option
 - Add leaveRoom to onWindowClose event handler
 - Formulate and implement a design scheme (desktop and mobile)
 - Encrypt socket connections
 - Handle dropped/prematurely closed connections
-- Control change in strategy (websocket/polling)
+- Handle server reboot by Heroku
+- Streamline lodash imports
 
 ## Authors
 

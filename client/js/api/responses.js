@@ -1,6 +1,7 @@
+import { find, isEmpty } from 'lodash';
 import { store } from '../reducers';
 import { roomActions } from '../actionCreators';
-import { setStorageItem } from '../utilities/helperMethods';
+import { getStorageItem, setStorageItem } from '../utilities/helperMethods';
 
 function identifyForFullstory(room, participant) {
 	if (!window.FS) return;
@@ -12,9 +13,7 @@ function identifyForFullstory(room, participant) {
 	});
 }
 
-function joinRoom(response) {
-	const { room, participant } = response.body;
-
+function joinRoom({ room, participant }) {
 	store.dispatch(roomActions.joinRoom({ room, participant }));
 	identifyForFullstory(room, participant);
 	setStorageItem("roomId", room.id);
@@ -26,13 +25,17 @@ export default {
 	/*
 		HTTP responses
 	 */
-	joinRoomResponse: joinRoom,
+	joinRoomResponse: function(response) {
+		joinRoom(response.body);
+	},
 
 	joinRoomError: function(error, response, message) {
 		alert(message);
 	},
 
-	createRoomResponse: joinRoom,
+	createRoomResponse: function(response) {
+		joinRoom(response.body);
+	},
 
 	createRoomError: function(error, response, message) {
 		alert(message);
@@ -43,7 +46,15 @@ export default {
 		Socket messages
 	 */
 	serverSync: function({ room, timestamp }) {
-		store.dispatch(roomActions.syncRoom({ room, timestamp }));
+		const participantId = getStorageItem("participantId");
+		const participant = find(room.participants, { id: participantId }) || {};
+
+		if (isEmpty(participant)) {
+			setStorageItem("participantId", null);
+			setStorageItem("roomId", null);
+		}
+
+		store.dispatch(roomActions.syncRoom({ room, participant, timestamp }));
 	},
 
 	error: function(data) {

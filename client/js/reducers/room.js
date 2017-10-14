@@ -1,4 +1,4 @@
-import { assign, filter, isEqual, map } from 'lodash';
+import { assign, filter, isEmpty, isEqual, map } from 'lodash';
 import { createStore } from 'redux'
 
 const init = {
@@ -36,7 +36,9 @@ const room = (state = init, {type, payload}) => {
 
 	switch (type) {
 		case "JOIN_ROOM":
+			return payload.room;
 		case "SYNC_ROOM":
+			if (isEmpty(payload.participant)) return init;
 			return payload.room;
 		case "CREATE_ITEM":
 
@@ -50,7 +52,7 @@ const room = (state = init, {type, payload}) => {
 		case "SET_ITEM_SCORE":
 
 			newProps.participants = map(state.participants, (participant) => {
-				if (!isEqual(participant.id, payload.participantId)) return participant;
+				if (!isEqual(participant.id, payload.actingParticipantId)) return participant;
 
 				return assign({}, participant, { itemScore: payload.itemScore });
 			});
@@ -64,7 +66,7 @@ const room = (state = init, {type, payload}) => {
 		case "KICK_PARTICIPANT":
 
 			newProps.participants = filter(state.participants, (participant) => {
-				return !isEqual(participant.id, payload.targetId);
+				return !isEqual(participant.id, payload.targetParticipantId);
 			});
 
 			return assign({}, state, newProps);
@@ -72,7 +74,7 @@ const room = (state = init, {type, payload}) => {
 		default:
 			return state;
 	}
-	return state ;
+	return state;
 }
 
 export default room;
