@@ -6,3 +6,8 @@
     padding: 1em 0 15px;
     text-align: center;
 }
+
+.btn.join-room, .btn.create-room {
+	width: 50%;
+    margin: 1em auto;
+}

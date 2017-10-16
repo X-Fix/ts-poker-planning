@@ -1,6 +1,4 @@
-import { assign, find, isEmpty, isEqual } from 'lodash';
-import { createStore } from 'redux'
-import { setStorageItem } from '../utilities/helperMethods';
+import { assign, isEqual } from 'lodash';
 
 const init = {};
 
@@ -22,6 +20,8 @@ const participant = (state = init, {type, payload}) => {
 			return assign({}, state, { itemScore: null });
 		case "SET_ITEM_SCORE":
 			return assign({}, state, { itemScore: payload.itemScore });
+		case "LEAVE_ROOM":
+			return init;
 		case "SYNC_ROOM":
 			// Only return new participant object if syncRoom changes affected this participant
 			if (!isEqual(payload.participant, state)) {

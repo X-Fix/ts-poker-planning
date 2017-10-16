@@ -44,6 +44,10 @@ const mapDispatchToProps = (dispatch) => {
 			apiRequests.kickParticipant(object);
 			dispatch(participantActions.kickParticipant(object));
 		},
+		leaveRoom: (object) => {
+			apiRequests.leaveRoom(object);
+			dispatch(participantActions.leaveRoom());
+		},
 		openShareLinkModal: () => {
 			dispatch(modalActions.openModal({
 				modalName: "shareLink"
@@ -60,6 +64,7 @@ class PokerRoom extends React.Component {
 		this.setItemScore = this.setItemScore.bind(this);
 		this.createItem = this.createItem.bind(this);
 		this.kickParticipant = this.kickParticipant.bind(this);
+		this.leaveRoom = this.leaveRoom.bind(this);
 		this.makeCardComponent = this.makeCardComponent.bind(this);
 		this.makeParticipantComponent = this.makeParticipantComponent.bind(this);
 	}
@@ -141,6 +146,13 @@ class PokerRoom extends React.Component {
 			actingParticipantId: this.props.participant.id,
 			targetParticipantId: targetParticipantId,
 			targetParticipantSocketId: targetParticipant.socketId
+		});
+	}
+
+	leaveRoom() {
+		this.props.leaveRoom({
+			roomId: this.props.room.id,
+			actingParticipantId: this.props.participant.id
 		});
 	}
 
@@ -226,8 +238,13 @@ class PokerRoom extends React.Component {
 		return (
 			<div>
 				<div className="poker-cards-container">
-					<div className="room-name-header" onClick={this.props.openShareLinkModal}>
-						{room.name}
+					<div className="room-name-header">
+						<div className="room-name-header__room-name" onClick={this.props.openShareLinkModal}>
+							{room.name}
+						</div>
+						<div className="btn leave-room" onClick={this.leaveRoom}>
+							{"Leave Room"}
+						</div>
 					</div>
 					{ cardComponents }
 					{

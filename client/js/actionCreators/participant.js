@@ -7,6 +7,12 @@ export default {
 			type: "KICK_PARTICIPANT",
 			payload: payload
 		};
+	},
+
+	leaveRoom: function() {
+		return {
+			type: "LEAVE_ROOM"
+		};
 	}
 
 }

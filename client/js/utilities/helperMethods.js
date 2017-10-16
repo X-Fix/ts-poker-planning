@@ -9,9 +9,9 @@ import { API_ENDPOINTS } from './constants';
  */
 export const getCurrentRoute = () => {
 	const hash = window.location.hash;
-	if (hash === "") return "PokerRoom";
-	if (hash.indexOf("/", 2) === -1) return hash.substring(2, hash.substring(2).includes("?") ? hash.indexOf("?") : hash.length) || "PokerRoom";
-	else return hash.substring(2, hash.indexOf("/", 2)) || "PokerRoom";
+	if (hash === "") return "JoinRoom";
+	if (hash.indexOf("/", 2) === -1) return hash.substring(2, hash.substring(2).includes("?") ? hash.indexOf("?") : hash.length) || "JoinRoom";
+	else return hash.substring(2, hash.indexOf("/", 2)) || "JoinRoom";
 }
 
 /**

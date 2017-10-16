@@ -1,5 +1,4 @@
 import { assign, forEach, keys } from 'lodash';
-import { createStore } from 'redux';
 import { API_ENDPOINTS, REQUEST_STATES } from '../utilities/constants';
 
 let init = {};

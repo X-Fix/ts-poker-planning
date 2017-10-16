@@ -46,6 +46,7 @@ export default {
 		Socket messages
 	 */
 	serverSync: function({ room, timestamp }) {
+
 		const participantId = getStorageItem("participantId");
 		const participant = find(room.participants, { id: participantId }) || {};
 

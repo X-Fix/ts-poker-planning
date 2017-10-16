@@ -1,15 +1,24 @@
 .room-name-header {
     width: 100%;
     height: 50px;
-    font-size: 30px;
-    text-align: center;
     border-bottom: 1px solid rgba(0,0,0,.2);
     margin-bottom: 10px;
-    cursor: pointer;
 }
 
-.room-name-header:hover {
+.room-name-header__room-name {
+    font-size: 30px;
+    cursor: pointer;
+    float: left;
+}
+
+.room-name-header__room-name:hover {
     text-decoration: underline;
+}
+
+.btn.leave-room {
+    font-size: 16px;
+    margin-top: 4px;
+    float: right;
 }
 
 .poker-cards-container {
@@ -18,6 +27,7 @@
     top: 0;
     left: 0;
     margin: 10px 2%;
+    clear: both;
 }
 
 .poker-card {

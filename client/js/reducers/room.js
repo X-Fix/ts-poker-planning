@@ -1,5 +1,4 @@
 import { assign, filter, isEmpty, isEqual, map } from 'lodash';
-import { createStore } from 'redux'
 
 const init = {
 	id: null,
@@ -71,6 +70,8 @@ const room = (state = init, {type, payload}) => {
 
 			return assign({}, state, newProps);
 
+		case "LEAVE_ROOM":
+			return init;
 		default:
 			return state;
 	}

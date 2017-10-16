@@ -1,4 +1,4 @@
-import { assign, isEmpty } from 'lodash';
+import { assign } from 'lodash';
 
 const init = {
 	shareLinkModalIsOpen: false

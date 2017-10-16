@@ -118,11 +118,39 @@ const socketRoutes = {
 		io.sockets.connected[targetParticipantSocketId].leave(roomId);
 	},
 
+	leaveRoom: function({ roomId, actingParticipantId }, socket, io) {
+		let room = dbi.checkOutRoom(roomId, "leaveRoom");
+
+		room.participants = _.filter(room.participants, (participant) => {
+			return !_.isEqual(actingParticipantId, participant.id);
+		});
+
+		const roomOwnerLeft = _.isEqual(actingParticipantId, room.ownerId);
+		const roomIsEmpty = room.participants.length === 0;
+
+		if (roomOwnerLeft) {
+			if (roomIsEmpty) {
+				room.ownerId = null;
+				console.log("Waiting "+TIME_OUTS.EMPTY_ROOM+"ms...");
+				setTimeout(deleteEmptyRoom, TIME_OUTS.EMPTY_ROOM, room);
+			} else {
+				room.ownerId = room.participants[0].id;
+			}
+		}
+
+		console.log(actingParticipantId + " (" + socket.conn.id + ") left room [" + roomId + "]");
+
+		syncRoom(io, room);
+		dbi.checkInRoom(roomId);
+		// Unsubscribe actingParticipant from socket updates AFTER sending "leave room" update to targetParticipant
+		io.sockets.connected[socket.conn.id].leave(roomId);
+	},
+
 	disconnect: function({ roomId }, socket, io) {
 		let room = dbi.checkOutRoom(roomId, "disconnect");
 		// NB: Socket.io handles leaving socket room on disconnect
         const socketId = socket.conn.id;
-        console.log("User disconnected from: [" + roomId + "] ("+socketId+")");
+        console.log("User disconnected from: [" + roomId + "] (" + socketId + ")");
 
         const participant = _.find(room.participants, {socketId: socketId});
 		if (_.isEmpty(participant)) return;
@@ -143,8 +171,6 @@ const socketRoutes = {
 			} else {
 				room.ownerId = room.participants[0].id;
 			}
-		} else {
-			console.log("Not room owner", participant.id, room.ownerId);
 		}
 
 		syncRoom(io, room);

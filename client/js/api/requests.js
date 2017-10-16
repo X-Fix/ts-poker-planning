@@ -1,4 +1,5 @@
 import apiInterface from './apiInterface';
+import { setStorageItem } from '../utilities/helperMethods';
 
 export default {
 
@@ -24,5 +25,12 @@ export default {
 
 	kickParticipant: function(requestObject) {
 		apiInterface.makeSocketRequest("kickParticipant", requestObject);
+	},
+
+	leaveRoom: function(requestObject) {
+		setStorageItem("participantId", null);
+		setStorageItem("roomId", null);
+
+		apiInterface.makeSocketRequest("leaveRoom", requestObject);
 	}
 }
