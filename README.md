@@ -56,23 +56,23 @@ npm run watch
 [3] Listening on 3000
 ```
 
-Your console printout should look something like the above example. Open your (Chrome) browser and go to "http://localhost:3000", voilà!
-Anyone on the same network as you can also connect using "[your network IP address]:3000"
+Your console printout should look something like the above example. Open your (Chrome) browser and go to ``http://localhost:3000``, voilà!
+Anyone on the same network as you can also connect using ``http://[your network IP address]:3000``
 
 There are 4 watcher processes running at this point:
- - client html 	[onchange](https://www.npmjs.com/package/onchange)
- - client css 	[onchange](https://www.npmjs.com/package/onchange)
- - client js 	[watchify](https://www.npmjs.com/package/watchify)
- - server js 	[nodemon](https://www.npmjs.com/package/nodemon)
+ - client html 	([onchange](https://www.npmjs.com/package/onchange))
+ - client css 	([onchange](https://www.npmjs.com/package/onchange))
+ - client js 	([watchify](https://www.npmjs.com/package/watchify))
+ - server js 	([nodemon](https://www.npmjs.com/package/nodemon))
 
- [concurrently](https://www.npmjs.com/package/concurrently) is used to fire them all up simultaneously. This might shock your console so if you get any errors when starting up just try running it again OR add some timing space between the 4 watcher processes firing up (eg. package.json > scripts > watch > "sleep 5s && ...")
+ [Concurrently](https://www.npmjs.com/package/concurrently) is used to fire them all up simultaneously. This might shock your console so if you get any errors when starting up just try running it again OR add some timing space between the 4 watcher processes firing up (eg. package.json > scripts > watch > "sleep 5s && ...")
 
 In develop environment the express server doesn't cache static files so no need to restart the server if you update the client files but you will need to refresh the page. No hot-reloading yet (Sssshhhhh)
 
 ## Running the tests
 
 We've recently started adding [![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://cypress.io)
-We're still adding more but for now you can run the regression test by starting up [Cypress](https://www.cypress.io/) with `npx cypress open` and then selecting the `front-end-regression-spec` test from the menu
+We're still adding more but for now you can run the regression test by starting up [Cypress](https://www.cypress.io/) with `npx cypress open` and then selecting the ``front-end-regression-spec`` test from the GUI menu.
 
 ## Deployment
 
