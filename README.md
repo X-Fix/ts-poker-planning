@@ -29,7 +29,7 @@ npm install
 
 Run locally
 
-```
+```Shell
 npm run watch
 
 [1]
@@ -60,12 +60,12 @@ Your console printout should look something like the above example. Open your (C
 Anyone on the same network as you can also connect using ``http://[your network IP address]:3000``
 
 There are 4 watcher processes running at this point:
- - client html 	([onchange](https://www.npmjs.com/package/onchange))
- - client css 	([onchange](https://www.npmjs.com/package/onchange))
- - client js 	([watchify](https://www.npmjs.com/package/watchify))
- - server js 	([nodemon](https://www.npmjs.com/package/nodemon))
+ - [0] client js 	([watchify](https://www.npmjs.com/package/watchify))
+ - [1] client css 	([onchange](https://www.npmjs.com/package/onchange))
+ - [2] client html 	([onchange](https://www.npmjs.com/package/onchange))
+ - [3] server js 	([nodemon](https://www.npmjs.com/package/nodemon))
 
- [Concurrently](https://www.npmjs.com/package/concurrently) is used to fire them all up simultaneously. This might shock your console so if you get any errors when starting up just try running it again OR add some timing space between the 4 watcher processes firing up (eg. package.json > scripts > watch > "sleep 5s && ...")
+ [Concurrently](https://www.npmjs.com/package/concurrently) is used to fire them all up simultaneously (The printout for each process can be linked by the index dictated at the start of each line). This might shock your console so if you get any errors when starting up just try running it again OR add some timing space between the 4 watcher processes firing up (eg. package.json > scripts > watch > "sleep 5s && ...")
 
 In develop environment the express server doesn't cache static files so no need to restart the server if you update the client files but you will need to refresh the page. No hot-reloading yet (Sssshhhhh)
 
