@@ -1,13 +1,30 @@
 .join-room-container {
-    width: 30%;
+    width: 450px;
     margin: 10% auto;
-    box-shadow: 1px 1px 5px 2px rgba(0,0,0,.5);
-    border-radius: 5px;
-    padding: 1em 0 15px;
+    box-shadow: 0 1px 5px -2px rgba(0,0,0,1);
+    padding: 20px 0 15px;
     text-align: center;
+    background-color: #fff;
+}
+
+.btn.join-room {
+	margin-top: 1em;
+}
+
+.btn.create-room {
+	margin-top: 2em;
 }
 
 .btn.join-room, .btn.create-room {
-	width: 50%;
-    margin: 1em auto;
+	width: 66%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #00aaff;
+    border-color: #00aaff;
+    color: white;
+}
+
+.btn.join-room:hover, .btn.create-room:hover {
+	background-color: #009eee;
+	border-color: #009eee;
 }

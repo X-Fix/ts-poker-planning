@@ -1,14 +1,20 @@
 .room-name-header {
+    position: fixed;
     width: 100%;
-    height: 50px;
+    z-index: 5;
+    height: 60px;
     border-bottom: 1px solid rgba(0,0,0,.2);
     margin-bottom: 10px;
+    background-color: #fff;
 }
 
 .room-name-header__room-name {
-    font-size: 30px;
-    cursor: pointer;
+    font-size: 32px;
+    line-height: 1.7;
+    margin-left: 50px;
+    color: #009eee;
     float: left;
+    cursor: pointer;
 }
 
 .room-name-header__room-name:hover {
@@ -16,82 +22,100 @@
 }
 
 .btn.leave-room {
-    font-size: 16px;
-    margin-top: 4px;
+    margin-top: 12px;
+    margin-right: 50px;
     float: right;
+    background-color: #0af;
+    border-color: #0af;
+    color: #fff;
+    width: 100px;
 }
 
 .poker-cards-container {
-    width: 62%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 10px 2%;
+    width: 60%;
+    margin: 0px 10px 0 30px;
     clear: both;
+    margin-top: 70px;
+    float: left;
 }
 
 .poker-card {
-    width: 125px;
-    height: 180px;
-    font-size: 100px;
+    width: 100px;
+    height: 150px;
+    color: #303030;
+    font-size: 84px;
     text-align: center;
-    padding: 60px 20px 0;
-    margin: 10px 20px;
+    padding: 55px 20px 0;
+    margin: 10px 15px;
+    background-color: #fff;
     float: left;
     cursor: pointer;
     border-radius: 10px;
-    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, .5);
-    -webkit-user-select: none; /* Chrome/Safari */
-    -moz-user-select: none; /* Firefox */
+    box-shadow: 0 1px 5px -2px rgba(0,0,0,1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    transition: color .25s, background-color .15s;
 }
 
 .poker-card:hover {
-    background: #e8e7e7;
+    background: #e7e7e7;
 }
 
 .poker-card.selected, .poker-card.selected.disabled:hover {
-    background-color: rgba(0, 193, 52, 0.7);
+    background-color: #00aaff;
+    color: white;
     font-weight: bold;
 }
 
 .poker-card.disabled {
-    opacity: 0.4;
+    color: #999;
 }
 
 .poker-card.disabled:hover {
-    cursor: auto;
-    background: #FFF;
+    cursor: default;
+    background: #fff
 }
 
 .create-item-container {
     margin: 0 auto;
-    width: 50%;
+    width: 450px;
     padding: 60px;
     clear: both;
 }
 
+.btn.create-item {
+    width: 66%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #00aaff;
+    border-color: #00aaff;
+    color: white;
+}
+
 .participant-panel {
-    width: 34%;
-    height: 100%;
-    position: fixed;
-    top: 0;
+    width: 400px;
     right: 0;
-    box-shadow: 0 0 5px 2px rgba(0,0,0,.5);
+    float: right;
+    margin-right: 50px;
+    margin-top: 80px;
+    background-color: white;
+    box-shadow: 0 1px 5px -2px rgba(0,0,0,1);
 }
 
 .participant-panel__header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 1em;
-    font-size: 1.2em;
-    font-weight: bold;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+    padding: 12px 56px;
+    font-size: 32px;
+    color: #009eee;
 }
 
 .participant-card {
     height: 4em;
-    border-color: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0,0,0,.2);
     border-style: solid;
     border-width: 0 0 1px;
-    padding: 1em 1em 0 0.5em;
+    padding: 1em .5em 0;
 }
 
 .participant-card__participant-icons {
@@ -103,29 +127,35 @@
 
 .participant-card__name {
     float: left;
-    font-size: 2em;
-    margin-top: 0.2em;
+    font-size: 24px;
+    margin-top: .5em;
+    width: 225px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .participant-card__item-icons {
     float: right;
-    margin-top: 1em;
+    margin: 1em 12px;
 }
 
 .btn.kick-participant {
     float: left;
-    width: 40px;
-    height: 17px;
-    margin: 7px 20px;
+    margin: 7px 6px;
+    background-color: #0af;
+    border-color: #0af;
+    color: #fff;
+    width: 50px;
 }
 
 .participant-card__item-score {
-    font-size: 2em;
+    font-size: 24px;
     float: right;
     border-radius: 25px;
-    box-shadow: 1px 2px 5px 2px rgba(0,0,0,.5);
-    height: 1.4em;
-    width: 1.4em;
+    border: 2px solid #0af;
+    color: #0af;
+    height: 40px;
+    width: 40px;
     text-align: center;
-    line-height: 1.4;
+    line-height: 40px;
 }

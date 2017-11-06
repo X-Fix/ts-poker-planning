@@ -88,6 +88,11 @@ class JoinRoom extends React.Component {
 						<input className="txt room-name" ref="txtRoomName" type="text" placeholder="Room name" tabIndex="1" autoFocus />
 						<label className="lbl participant-name">Your Name</label>
 						<input className="txt participant-name" ref="txtParticipantName" type="text" placeholder="Your name" tabIndex="2" />
+						<label className="lbl card-type" htmlFor="ddCardType">Card Type:</label>
+						<select className="dd card-type" ref="ddCardType" name="ddCardType">
+							{ cardTypeOptions }
+						</select>
+						<div className="btn create-room" tabIndex="4" onClick={this.createRoom}>Create Room</div>
 					</div>
 					:
 					<div>
@@ -98,17 +103,6 @@ class JoinRoom extends React.Component {
 					</div>
 				}
 				<div className="btn join-room" tabIndex="3" onClick={this.joinRoom}>Join Room</div>
-				{
-					isEmpty(this.state.autoJoinRoomName) ?
-					<div>
-						<div className="btn create-room" tabIndex="4" onClick={this.createRoom}>Create Room</div>
-						<label className="lbl card-type" htmlFor="ddCardType">Card Type:</label>
-						<select className="dd card-type" ref="ddCardType" name="ddCardType">
-							{ cardTypeOptions }
-						</select>
-					</div>
-					: null
-				}
 			</div>
 		);
 	}
