@@ -1,18 +1,29 @@
+.mainBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f0faff;
+}
+
 .btn {
 	display: block;
-    padding: 0.5em;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
+    border-radius: 2px;
     text-align: center;
     cursor: pointer;
+    font-size: 14px;
+    height: 1.8em;
+    padding: 0.5em 0 0;
+    border: 1px solid;
+    transition: all .15s;
 }
 
-.btn:hover {
-	box-shadow: inset 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
-}
-
-.btn:focus {
-    outline: none;
+.dd {
+    width: 66%;
+    height: 2.7em;
+    background-color: #fff;
+    border-color: #d3d3d3;
 }
 
 .dsply {
@@ -20,16 +31,31 @@
 }
 
 .lbl {
-    margin-right: 1em;
+    font-size: 16px;
+    color: #303030;
 }
 
 .txt {
-    display: block;
     width: 60%;
     height: 3em;
     border-radius: 2px;
-    border-style: none;
-    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, .5);
-    margin: 1em auto;
+    border: 1px solid lightgrey;
+    box-shadow: inset 0 1px 2px -2px rgba(0,0,0,1);
     padding: 0 1em;
+}
+
+.txt, .dd {
+    display: block;
+    margin: 1em auto;
+    transition: all .15s;
+    font-size: 12px;
+}
+
+.txt:hover, .dd:hover {
+    border-color: darkgrey;
+}
+
+.txt:focus, .dd:focus {
+    border-color: #00a9ff;
+    box-shadow: inset 0 1px 4px -2px rgb(0, 169, 255);
 }

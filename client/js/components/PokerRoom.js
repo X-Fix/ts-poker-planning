@@ -237,15 +237,15 @@ class PokerRoom extends React.Component {
 
 		return (
 			<div>
-				<div className="poker-cards-container">
-					<div className="room-name-header">
-						<div className="room-name-header__room-name" onClick={this.props.openShareLinkModal}>
-							{room.name}
-						</div>
-						<div className="btn leave-room" onClick={this.leaveRoom}>
-							{"Leave Room"}
-						</div>
+				<div className="room-name-header">
+					<div className="room-name-header__room-name" onClick={this.props.openShareLinkModal}>
+						{room.name}
 					</div>
+					<div className="btn leave-room" onClick={this.leaveRoom}>
+						{"Leave Room"}
+					</div>
+				</div>
+				<div className="poker-cards-container">
 					{ cardComponents }
 					{
 						isOwner ?
@@ -269,7 +269,7 @@ class PokerRoom extends React.Component {
 					}
 				</div>
 				<div className="participant-panel">
-					<div className="participant-panel__header">{"Current item: " + (itemEmpty ? "None" : room.item.name)}</div>
+					<div className="participant-panel__header">{(itemEmpty ? "Welcome" : room.item.name)}</div>
 					{ participantComponents }
 				</div>
 				<ShareLinkModal />
