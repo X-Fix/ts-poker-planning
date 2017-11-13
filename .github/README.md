@@ -19,14 +19,14 @@ Follow the relevant instructions in [this tutorial](https://www.atlassian.com/gi
 
 Disclaimer: We've only been able to test the npm build scripts on Mac OS X so they should run on Linux just fine and hopefully on Windows as well
 
-Installing Node with HomeBrew (MacOS and Linux)
+Installing Node with HomeBrew (MacOS and Linux):
 
 ```
 brew install node
 ```
 Check out [this blog](http://blog.teamtreehouse.com/install-node-js-npm-linux) if you have any linux issues
 
-Installing with direct download (Windows)
+Installing with direct download (Windows):
 Go to the [Node website download page](https://nodejs.org/en/download/) and select the Windows Installer. Run the downloaded .msi file, etc. If you get stuck check out [this blog](http://blog.teamtreehouse.com/install-node-js-npm-windows) for more details
 
 ### Git Setup
@@ -91,7 +91,7 @@ You should then see the following...
 ```
 
 Open your (Chrome) browser and go to ``http://localhost:3000``, voilà!
-Anyone on the same network as you can also connect using ``http://[your network IP address]:3000``
+Anyone on the same network as you can also connect to your local server using ``http://[your network IP address]:3000`` in their browser
 
 There are 4 watcher processes running at this point:
  - [0] client js 	([watchify](https://www.npmjs.com/package/watchify))
@@ -117,10 +117,10 @@ In the local repository folder add the following `heroku` remote
 heroku git:remote -a ts-poker-planning
 ```
 
-Each time you want to deploy, run the following
+Each time you want to deploy, run the following (don't forget to bump the version accordingly)
 
 ```
-npm run build-production && git push heroku master
+npm run heroku
 ```
 
 ## Roadmap/Todos
