@@ -7,31 +7,65 @@ It's quite a bit rough around the edges regarding UI design (or lack thereof) an
 
 ## Getting Started
 
-Fork and clone, pretty straightforward
+This section will get you up and running with a local copy of the code installed and ready to run on your machine
 
-### Prerequisites
+### Environment and Dev Tool Prerequisites
 
-Node and npm@5.2.0+. We've only been able to test the build scripts on Mac OS X so they should run on Linux just fine and hopefully on Windows as well
+#### Git
 
-Installing Node with HomeBrew (MacOS)
+Follow the relevant instructions in [this tutorial](https://www.atlassian.com/git/tutorials/install-git) to install Git
+
+#### Node and NPM
+
+Disclaimer: We've only been able to test the npm build scripts on Mac OS X so they should run on Linux just fine and hopefully on Windows as well
+
+Installing Node with HomeBrew (MacOS and Linux)
 
 ```
 brew install node
 ```
+Check out [this blog](http://blog.teamtreehouse.com/install-node-js-npm-linux) if you have any linux issues
+
+Installing with direct download (Windows)
+Go to the [Node website download page](https://nodejs.org/en/download/) and select the Windows Installer. Run the downloaded .msi file, etc. If you get stuck check out [this blog](http://blog.teamtreehouse.com/install-node-js-npm-windows) for more details
+
+### Git Setup
+
+Click `Fork` at the top right of this page and select your Github profile. Once you have your fork of the repository, select the "Clone or download" button, copy the URL provided, and clone your fork onto your machine by running the following command in the selected folder
+
+```
+git clone [paste copied URL here]
+```
 
 ### Installing
 
-Install project dependencies
+Navigate to the project folder
 
+[macOS/Linux]
+```
+cd ts-poker-planning
+```
+
+[Windows]
+```
+chdir ts-poker-planning
+```
+
+Install the project dependencies
 ```
 npm install
 ```
 
-Run locally
+### Running
+
+To run locally
+```
+npm run watch
+```
+
+You should then see the following...
 
 ```Shell
-npm run watch
-
 [1]
 [1] > poker-planning-server@2.5.0 css-watch /pokerplanning
 [1] > onchange "client/css/*.css" -i -- cleancss --skip-rebase -o public/style.css client/css/*.css
@@ -56,7 +90,7 @@ npm run watch
 [3] Listening on 3000
 ```
 
-Your console printout should look something like the above example. Open your (Chrome) browser and go to ``http://localhost:3000``, voilà!
+Open your (Chrome) browser and go to ``http://localhost:3000``, voilà!
 Anyone on the same network as you can also connect using ``http://[your network IP address]:3000``
 
 There are 4 watcher processes running at this point:
@@ -78,7 +112,7 @@ We're still adding more but for now you can run the regression test by starting 
 
 The production server is hosted on Heroku so you'll need to have a Heroku account and have the Heroku CLI installed to deploy. Just follow the installation instructions in the links here to get [set up](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) and [logged in](https://devcenter.heroku.com/articles/heroku-cli#getting-started) to your Heroku account (You'll need to be added as a collaborator before completing the next steps)
 
-In the local repository folder add the following remote `heroku`
+In the local repository folder add the following `heroku` remote
 ```
 heroku git:remote -a ts-poker-planning
 ```
@@ -88,7 +122,6 @@ Each time you want to deploy, run the following
 ```
 npm run build-production && git push heroku master
 ```
-
 
 ## Roadmap/Todos
 
