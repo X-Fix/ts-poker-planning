@@ -125,13 +125,7 @@ npm run heroku
 
 ## Roadmap/Todos
 
-- Add more tests and a linter
-- [Feature] "Remember me" option
-- Formulate and implement a design scheme (desktop and mobile)
-- Encrypt socket connections
-- Handle dropped/prematurely closed connections
-- Handle server reboot by Heroku
-- Streamline lodash imports
+All current roadmap items can be found in the [Issues](https://github.com/X-Fix/ts-poker-planning/issues) section. Feel free to add your own, just stick to the examples and template
 
 ## Authors
 
