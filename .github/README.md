@@ -43,12 +43,12 @@ Navigate to the project folder
 
 [macOS/Linux]
 ```
-cd ts-poker-planning
+cd path/to/ts-poker-planning
 ```
 
 [Windows]
 ```
-chdir ts-poker-planning
+chdir path/to/ts-poker-planning
 ```
 
 Install the project dependencies
@@ -110,22 +110,22 @@ We're still adding more but for now you can run the regression test by starting 
 
 ## Deployment
 
-The production server is hosted on Heroku so you'll need to have a Heroku account and have the Heroku CLI installed to deploy. Just follow the installation instructions in the links here to get [set up](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) and [logged in](https://devcenter.heroku.com/articles/heroku-cli#getting-started) to your Heroku account (You'll need to be added as a collaborator before completing the next steps)
+The production server is hosted on Heroku so you'll need to have a Heroku account and have the Heroku CLI installed to deploy. Just follow the installation instructions in the links here to get [set up](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) and [logged in](https://devcenter.heroku.com/articles/heroku-cli#getting-started) to your Heroku account (You'll need to be added to the Heroku project as a collaborator before completing the next steps)
 
 In the local repository folder add the following `heroku` remote
 ```
 heroku git:remote -a ts-poker-planning
 ```
 
-Each time you want to deploy, run the following (don't forget to bump the version accordingly)
+Each time you want to deploy, run the following (don't forget to bump the version first)
 
 ```
 npm run heroku
 ```
 
-## Roadmap/Todos
+## Roadmap/Todos/Bugs
 
-All current roadmap items can be found in the [Issues](https://github.com/X-Fix/ts-poker-planning/issues) section. Feel free to add your own, just stick to the examples and template
+All of these can be found in the [Issues](https://github.com/X-Fix/ts-poker-planning/issues) section. Feel free to add your own, just stick to the examples and template
 
 ## Authors
 
