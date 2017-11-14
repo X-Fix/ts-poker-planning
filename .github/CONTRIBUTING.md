@@ -23,9 +23,9 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 * [Wireframes](#wireframes)
 * [Case Standards and Naming Conventions](#case-standards-and-naming-conventions)
 * [JavaScript Style Guide](#javascript-style-guide)
-* [Documentation and Comments]#documentation-and-comments)
+* [Documentation and Comments](#documentation-and-comments)
 * [Issues and Pull Requests](#issues-and-pull-requests)
-* Git Branches and Commits(#git-branches-and-commits)
+* [Git Branches and Commits](#git-branches-and-commits)
 
 ### [Design Decisions](#design-decisions)
 
