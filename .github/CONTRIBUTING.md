@@ -4,7 +4,7 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 
 ## Table of Contents
 
-### [What should I know before I get started?](#what-should-i-know-before-i-get-started)
+[**What should I know before I get started?**](#what-should-i-know-before-i-get-started)
 
 * [React](#react)
 * [Redux](#redux)
@@ -12,13 +12,13 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 * [Socket.io](#socket.io)
 * [Cypress.io](#cypress.io)
 
-### [Where to Start](#where-to-start)
+[**Where to Start**](#where-to-start)
 
 * [This Document](#this-document)
 * [Existing Issues](#existing-issues)
 * [Your Ideas](#your-ideas)
 
-### [Style Guides](#style-guides)
+[**Style Guides**](#style-guides)
 
 * [Wireframes](#wireframes)
 * [Case Standards and Naming Conventions](#case-standards-and-naming-conventions)
@@ -27,7 +27,7 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 * [Issues and Pull Requests](#issues-and-pull-requests)
 * [Git Branches and Commits](#git-branches-and-commits)
 
-### [Design Decisions](#design-decisions)
+[**Design Decisions**](#design-decisions)
 
 * [Why React and Redux](#why-react-and-redux)
 * [Handling Side Effects](#handling-side-effects)
@@ -35,7 +35,7 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 * [Choosing Component Types](#choosing-component-types)
 * [API Naming Convention](#api-naming-convention)
 
-### [Priorities](#priorities)
+[**Priorities**](#priorities)
 
 * [Size Matters](#size-matters)
 * [Minimal Renders](3minimal-renders)
