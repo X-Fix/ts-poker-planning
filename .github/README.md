@@ -103,12 +103,12 @@ There are 4 watcher processes running at this point:
 
 In develop environment the express server doesn't cache static files so no need to restart the server if you update the client files but you will need to refresh the page. No hot-reloading yet (Sssshhhhh)
 
-## Running the tests
+### Running the tests
 
 We've recently started adding [![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://cypress.io)
 We're still adding more but for now you can run the regression test by starting up [Cypress](https://www.cypress.io/) with `npx cypress open` and then selecting the ``front-end-regression-spec`` test from the GUI menu.
 
-## Deployment
+### Deployment
 
 The production server is hosted on Heroku so you'll need to have a Heroku account and have the Heroku CLI installed to deploy. Just follow the installation instructions in the links here to get [set up](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) and [logged in](https://devcenter.heroku.com/articles/heroku-cli#getting-started) to your Heroku account (You'll need to be added to the Heroku project as a collaborator before completing the next steps)
 
