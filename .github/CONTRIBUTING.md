@@ -4,15 +4,15 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 
 ## Table of Contents
 
-###[What should I know before I get started?](#what-should-i-know-before-i-get-started)
+### [What should I know before I get started?](#what-should-i-know-before-i-get-started)
 
-	* [React](#react)
-	* [Redux](#redux)
-	* [Express](#express)
-	* [Socket.io](#socket.io)
-	* [Cypress.io](#cypress.io)
+* [React](#react)
+* [Redux](#redux)
+* [Express](#express)
+* [Socket.io](#socket.io)
+* [Cypress.io](#cypress.io)
 
-###[Where to Start](#where-to-start)
+### [Where to Start](#where-to-start)
 
  * [This Document](#this-document)
  * [Existing Issues](#existing-issues)
