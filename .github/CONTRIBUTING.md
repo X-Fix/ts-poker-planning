@@ -5,6 +5,7 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 ## Table of Contents
 
 ###[What should I know before I get started?](#what-should-i-know-before-i-get-started)
+
 	* [React](#react)
 	* [Redux](#redux)
 	* [Express](#express)
@@ -12,9 +13,10 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 	* [Cypress.io](#cypress.io)
 
 ###[Where to Start](#where-to-start)
-	* [This Document](#this-document)
-	* [Existing Issues](#existing-issues)
-	* [Your Ideas](#your-ideas)
+
+ * [This Document](#this-document)
+ * [Existing Issues](#existing-issues)
+ * [Your Ideas](#your-ideas)
 
 ###[Style Guides](#style-guides)
 	* [Wireframes](#wireframes)
