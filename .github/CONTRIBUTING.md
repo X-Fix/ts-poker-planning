@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Welcome to the project, hope you enjoy your stay. The guidelines below will detail what you need to know in order to be a productive contributor as well as a few standards for keeping everyone's contributions consistent
+Welcome to the project, hope you enjoy your stay. The guidelines below will detail what you need to know in order to be a productive contributor as well as a few standards for keeping everyone's contributions consistent.
 
 ## Table of Contents
 
@@ -39,7 +39,7 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 [**Priorities**](#priorities)
 
 * [Size Matters](#size-matters)
-* [Minimal Renders](3minimal-renders)
+* [Minimal Renders](#minimal-renders)
 
 -----
 
@@ -93,11 +93,11 @@ Before really digging you in should at least skim over the rest of this document
 
 ### Existing Issues
 
-Once you're comfortable with everything contained in this document you can start looking into the [existing issues](https://github.com/X-Fix/ts-poker-planning/issues) for anything you feel like tackling, especially those with a "help wanted" tag, or a "good first issue" tag if you're a newcomer to contributing to this repository
+Once you're comfortable with everything contained in this document you can start looking into the [existing issues](https://github.com/X-Fix/ts-poker-planning/issues) for anything you feel like tackling, especially those with a ``help wanted`` tag, or a ``good first issue`` tag if you're a newcomer to contributing to this repository
 
 ### Your Ideas
 
-As explained more thoroughly below, this project is in part meant to be a playground so once you're familiar with the project you can start adding your own ideas to the Issues list and then working on them. If you are unsure of whether your idea aligns with the project's purpose feel free to contact any of the authors and ask.
+As explained more thoroughly below, this project is in part meant to be a playground so once you're familiar with the project you can start adding your own ideas to the ``Issues`` list and then working on them. If you are unsure of whether your idea aligns with the project's purpose feel free to contact any of the authors and ask.
 
 -----
 
@@ -107,17 +107,18 @@ In an effort to maintain consistency throughout this project for the sake of cod
 
 ### Wireframes
 
-For FE code there is a folder of wireframe files which you can copy/paste from when creating on of the components or classes listed in the folder. You can also see an example of the case standard used when naming the relevant type of file
+For FE code there is a folder of wireframe files which you can copy/paste from when creating one of the components or classes listed in the folder. You can also see an example of the case standard used when naming the relevant type of file
 
 ### Naming Conventions
 
 - JavaScript files are named in ``camelCase`` with the exception of React components which are named in ``PascalCase``
+
 -- Action creators are named after the thing the action is primarily affecting
 -- Top level components are named after the page they represent
 -- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom")
 -- Reducers are named after the thing they represent data for
 
-- CSS files are named in kebab-case and, like the component folders, are named either after the shared function of the components they apply to or the page the styles are specific to
+- CSS files are named in ``kebab-case`` and, like the component folders, are named either after the shared function of the components they apply to or the page the styles are specific to
 
 Ambiguity increases mental fatigue, especially when working on shared code. For that reason the following guidelines exist
 
@@ -154,7 +155,7 @@ Comments are life! Please use them!
 #### Issues
 
 - Should contain a description giving context and requirements in the form of a user story
-- If you are technically inclined and have an idea how to fulfill the issue requirement please leave more details like exact file locations and proposed solutions
+- If you are technically inclined and have an idea of how to fulfill the issue requirement please leave more details like exact file locations and proposed solutions (always assume no-one has context for an issue)
 - Should contain a 'checklist' of acceptance criteria that serve to describe the scope of the issue. Once all the acceptance criteria are filled, an issue can be considered solved
 
 #### Pull Requests
@@ -183,28 +184,33 @@ Some of these are just explanations for why I thought a particular tool was best
 
 ### Why React and Redux
 
-When thinking about multiple clients keeping in sync with a shared server this made me think of both React's and Redux's approach to updates. Previously if you had "2" and wanted "5" you would say "+3". With these libraries it feels more like saying "from 2 to 5" and React figures out how to "+3" for you. The point being that if something changes we just figure out what the new 'now' is and go from there rather than trying to mirror the change correctly everywhere
+When thinking about multiple clients keeping in sync with a shared server this made me think of both React's and Redux's approach to updates. Previously if you had "2" and wanted "5" you would say "+3". With these libraries it feels more like saying "from 2 to 5" and React figures out how to "+3" for you.
+
+The point is that if something changes we just figure out what the new 'now' is and go from there rather than trying to mirror the change correctly everywhere. This seemed like a much more reliable approach to keeping everyone in sync.
 
 ### Handling Side Effects
 
 [Front-end specific]
 Side effects are a no-no in redux reducers but often it would seem to make sense to (for example) carry out any sessionStorage or localStorage updates within a reducer's event handler.
+
 I realised that side-efects only tend to happen when communication with the API is involved. The api/requests.js and api/responses.js files may seem like they simply pass the method call along but this pattern is to allow any side effects to be handled inside these
 files.
 
 ### Emitting Updates to Clients
 
 An argument could be made that when updating each client for a change in a poker room, a diff or replay action could be used to bring that client up to speed with the one that performed the action.
-The problem with this approach is that if an event is missed there is no way of catching it up again. So, instead, the server keeps track of actions performed by each client and, after each change, sends an updated version of the entire room state to each client so everyone remains in sync, even if they missed a previous update
+
+The problem with this approach is that if an event is missed there is no way of catching it up again. So, instead, the server keeps track of actions performed by each client and, after each change, sends an updated version of the entire room state to each client so everyone remains in sync, even if they missed a previous update.
 
 ### Choosing Component Types
 
 React has two component types, 10 different names to differentiate between the two (I will use "Class" and "Functional", cos one's a class, the other is a function), and 100 patterns for when to use each.
+
 My biggest issue with functional components is you cannot optimise component updates without access to the shouldComponentUpdate method so if the component is anything more complicated than a collection of commonly grouped html elements, it should be a Class component.
 
-### API Naming Convent
+### API Naming Convention
 
-Naming request and response handlers in a predictable standard allows us to reduce the amount of callback-handler-setup code immensely. The standard looks something like this
+Naming request and response handlers in a predictable standard allows us to reduce the amount of callback-handler-setup code immensely. The standard looks something like this:
 ```
 request name = "login"
 response handler = "loginResponse"
@@ -212,12 +218,12 @@ error handler = "loginError"
 ```
 By using this standard we can take something repetitive like setting up callbacks for the super-agent AJAX libraries response handlers and dictate a single method which calls the relevant handler based on the request name and response type, ie:
 
-*client/js/api/apiInterface*
+*client/js/api/apiInterface.js*
 ```javascript
 let handler = apiResponses[requestName+"Response"];
 ```
 
-... where ``apiResponses`` is an object with response handlers for its properties
+... where ``apiResponses`` is an object with response handlers for its properties.
 
 -----
 
