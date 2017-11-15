@@ -7,11 +7,11 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 [**What should I know before I get started?**](#what-should-i-know-before-i-get-started)
 
 * [ES6](#ecmascript-6)
-* [React](#react)
-* [Redux](#redux)
-* [Express](#express)
-* [Socket.io](#socket.io)
-* [Cypress.io](#cypress.io)
+* [React](#react-fe)
+* [Redux](#redux-fe)
+* [Express](#express-be)
+* [Socket.io](#socketio-be)
+* [Cypress.io](#cypressio-testing)
 
 [**Where to Start**](#where-to-start)
 
@@ -40,6 +40,8 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 
 * [Size Matters](#size-matters)
 * [Minimal Renders](3minimal-renders)
+
+-----
 
 ## What should I know before I get started?
 
@@ -79,6 +81,8 @@ The Cypress.io library is used as a regression and unit test runner. Cypress wra
 
 We don't enforce unit testing for each feature just yet but it's good to understand how Cypress.io works
 
+-----
+
 ## Where to Start
 
 Assuming you have a good understanding of the relevant libraries and frameworks, the next question is where to go to start contributing
@@ -95,12 +99,149 @@ Once you're comfortable with everything contained in this document you can start
 
 As explained more thoroughly below, this project is in part meant to be a playground so once you're familiar with the project you can start adding your own ideas to the Issues list and then working on them. If you are unsure of whether your idea aligns with the project's purpose feel free to contact any of the authors and ask.
 
+-----
+
 ## Style Guides
 
 In an effort to maintain consistency throughout this project for the sake of code readability and developer confidence we've outlined a few style guides below
 
 ### Wireframes
 
-For FE code there is a folder of wireframe files which you can copy/paste when creating on of the components or classes listed in the folder. You can also see an example of the case standard used when naming the relevant type of file
+For FE code there is a folder of wireframe files which you can copy/paste from when creating on of the components or classes listed in the folder. You can also see an example of the case standard used when naming the relevant type of file
 
-### Case Standards and Naming Conventions
+### Naming Conventions
+
+- JavaScript files are named in ``camelCase`` with the exception of React components which are named in ``PascalCase``
+-- Action creators are named after the thing the action is primarily affecting
+-- Top level components are named after the page they represent
+-- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom")
+-- Reducers are named after the thing they represent data for
+
+- CSS files are named in kebab-case and, like the component folders, are named either after the shared function of the components they apply to or the page the styles are specific to
+
+Ambiguity increases mental fatigue, especially when working on shared code. For that reason the following guidelines exist
+
+- The word 'user' is banned! People who engage with the webapp are either a 'participant' and/or 'roomOwner' or something that describes their role in the system
+- Object properties should not be repetitive, eg. room.roomId is unnecessary. Rather use something like room.id
+- When translating object properties to variables, however, always be specific, eg.
+```javascript
+var roomId = room.id;
+```
+- Do not abreviate/shorten variable names. The code gets obfuscated during the build process so you are not saving any space, just being lazy. Abuse your autocomplete or copy/paste if necessary.
+
+### JavaScript Style Guide
+
+- Tabs, not spaces
+- Single quotes for strings
+- Semicolons always
+- Space after keywords eg. ``if (condition) { ... }``
+- Space inside curly braces (especially for spread operators) eg ``function({ arg1, arg2 })``
+- No space after function name eg. ``function name(arg) {}``
+- Always use === instead of ==
+
+### Documentation and Comments
+
+Comments are life! Please use them!
+
+- Always appear on top, not next to code
+- React components should have a description above the render() method and list the direct child component dependencies
+- All helperMethods should have a thorough description of what the method does and how
+- If you have an intricate process (eg. routeHandlers) add comments to describe the train of thought or process
+- Same goes for complicated if conditions
+
+### Issues and Pull Requests
+
+#### Issues
+
+- Should contain a description giving context and requirements in the form of a user story
+- If you are technically inclined and have an idea how to fulfill the issue requirement please leave more details like exact file locations and proposed solutions
+- Should contain a 'checklist' of acceptance criteria that serve to describe the scope of the issue. Once all the acceptance criteria are filled, an issue can be considered solved
+
+#### Pull Requests
+
+- Title should match title of the relevant issue
+- Should reference the relevant issue by id in description
+- Should contain a listed summary of implementation details
+- Should have a completed checklist of all house-keeping tasks (tests run, etc)
+
+### Git Branches and Commits
+
+- Branch names should be the issue number and title in snake_case eg. "#12_Ron_Swanson_quotes"
+- Do something, commit, describe the thing you just did in commit message, repeat.
+
+-----
+
+## Design Decisions
+
+"There are a thousand ways to make code do one thing, and a handful of ways to do it right" ~ Me
+
+This project started as an experiment with socket connections (get an idea of how they worked, what kind of challenges do you face when using them, etc) along the way I decided to try keep it in the best code shape possible and so it became a training ground for good coding practices (I know there's still lots of improvements to make). It is still both of those things and now it's also becoming a testing ground for any fun ideas or libraries we'd like to play with. As part of the process I'd like us to report back on what we learn in this section so others may benefit from it as well as uphold the standards we create.
+
+Some of these fall under consistency for the sake of readability and reducing mental fatigue. There's always more than one way of getting the job done but in these specific cases you need to stick to this way to avoid accumulating tech debt in the form of creating a need for refactoring, and to set a good example for future newcomers.
+
+Some of these are just explanations for why I thought a particular tool was best for the job. Some of these might also be something like "I thought it would be fun to try".
+
+### Why React and Redux
+
+When thinking about multiple clients keeping in sync with a shared server this made me think of both React's and Redux's approach to updates. Previously if you had "2" and wanted "5" you would say "+3". With these libraries it feels more like saying "from 2 to 5" and React figures out how to "+3" for you. The point being that if something changes we just figure out what the new 'now' is and go from there rather than trying to mirror the change correctly everywhere
+
+### Handling Side Effects
+
+[Front-end specific]
+Side effects are a no-no in redux reducers but often it would seem to make sense to (for example) carry out any sessionStorage or localStorage updates within a reducer's event handler.
+I realised that side-efects only tend to happen when communication with the API is involved. The api/requests.js and api/responses.js files may seem like they simply pass the method call along but this pattern is to allow any side effects to be handled inside these
+files.
+
+### Emitting Updates to Clients
+
+An argument could be made that when updating each client for a change in a poker room, a diff or replay action could be used to bring that client up to speed with the one that performed the action.
+The problem with this approach is that if an event is missed there is no way of catching it up again. So, instead, the server keeps track of actions performed by each client and, after each change, sends an updated version of the entire room state to each client so everyone remains in sync, even if they missed a previous update
+
+### Choosing Component Types
+
+React has two component types, 10 different names to differentiate between the two (I will use "Class" and "Functional", cos one's a class, the other is a function), and 100 patterns for when to use each.
+My biggest issue with functional components is you cannot optimise component updates without access to the shouldComponentUpdate method so if the component is anything more complicated than a collection of commonly grouped html elements, it should be a Class component.
+
+### API Naming Convent
+
+Naming request and response handlers in a predictable standard allows us to reduce the amount of callback-handler-setup code immensely. The standard looks something like this
+```
+request name = "login"
+response handler = "loginResponse"
+error handler = "loginError"
+```
+By using this standard we can take something repetitive like setting up callbacks for the super-agent AJAX libraries response handlers and dictate a single method which calls the relevant handler based on the request name and response type, ie:
+
+*client/js/api/apiInterface*
+```javascript
+let handler = apiResponses[requestName+"Response"];
+```
+
+... where ``apiResponses`` is an object with response handlers for its properties
+
+-----
+
+## Priorities
+
+While there is always space for more optimisation in some form or another, at some point we need to draw a line in the sand past which debate takes up more energy than its worth. Optimisation is still fun and interesting, though, so I've outlined two main priorities for this project which I've found present some interesting challenges
+
+### Size Matters
+
+This applies to both JavaScript and CSS, primarily for FE code. Short of just removing established libraries in this project, if you can find ways to reduce the final build.min.js by even 1kb we consider that a victory. Some examples
+
+- Libraries like React have a production build the simplifies error tracking and logging, reducing the build size
+- Don't import an entire utility library just to use one or two methods from it. Lodash is a good exmaple of a library that let's you only import the code you need
+- Minify, obfuscate, uglify, compress! All these things are a step closer to a smaller build
+
+### Minimal Renders
+
+One of the easiest ways to optimise FE performance with React is minimising the number of times each component's render method is called. Each time a reducer is updated, relevant components update which triggers their render method after which React performs a diff on the old render and new render and updates the DOM to reflect any changes. Sometimes, however, the changes in the reducer will not result in any changes in a certain component. If we can identify this early in the shouldComponentUpdate method we can avoid unnecessary update cycles and therefore unnecessary renders and diffs.
+
+The easiest way to do this is to compare the state and props of the component to see if the updated reducer affected anything directly relating to the component or not. Another way on top of this is to ensure that the amount of info passed into a component's props from the reducer is kept to an absolute minimum.
+
+-----
+
+## Conclusion
+
+That concludes this document! Thanks for sticking through it, hope you enjoy contributing to this project.
+
