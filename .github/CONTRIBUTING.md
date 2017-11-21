@@ -111,14 +111,14 @@ For FE code there is a folder of wireframe files which you can copy/paste from w
 
 ### Naming Conventions
 
-- JavaScript 
+- JavaScript
 	- Files are named in ``camelCase`` with the exception of React components which are named in ``PascalCase``
-	- Action creators are named after the thing the action is primarily affecting 
-	- Top level components are named after the page they represent 
-	- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom") 
-	- Reducers are named after the thing they represent data for 
+	- Action creators are named after the thing the action is primarily affecting
+	- Top level components are named after the page they represent
+	- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom")
+	- Reducers are named after the thing they represent data for
 
-- CSS 
+- CSS
 	- Files are named in ``kebab-case`` and, like the component folders, are named either after the shared function of the components they apply to, or the page the styles are specific to
 
 Ambiguity increases mental fatigue, especially when working on shared code. For that reason the following guidelines exist
@@ -199,15 +199,15 @@ files.
 
 ### Emitting Updates to Clients
 
-An argument could be made that when updating each client for a change in a poker room, a diff or replay action could be used to bring that client up to speed with the one that performed the action.
+An argument could be made that when updating other clients about a change to a poker room, a diff or replay action could be used to bring those clients up to speed with the client that performed the action.
 
-The problem with this approach is that if an event is missed there is no way of catching it up again. So, instead, the server keeps track of actions performed by each client and, after each change, sends an updated version of the entire room state to each client so everyone remains in sync, even if they missed a previous update.
+The problem with this approach is that if an event is missed (eg. network issues) there is no way of catching it up again. So, instead, the server keeps track of actions performed by each client and, after each change, sends an updated version of the entire room state to all clients so everyone remains in sync, even if they missed a previous update.
 
 ### Choosing Component Types
 
-React has two component types, 10 different names to differentiate between the two (I will use "Class" and "Functional", cos one's a class, the other is a function), and 100 patterns for when to use each.
+React has two component types and developers have about 10 different names to differentiate between the two (I will use "Class" and "Functional", cos one's a class, the other is a function), and 100 patterns for when to use each.
 
-My biggest issue with functional components is you cannot optimise component updates without access to the shouldComponentUpdate method so if the component is anything more complicated than a collection of commonly grouped html elements, it should be a Class component.
+My biggest issue with using functional components is you cannot optimise component updates without access to the shouldComponentUpdate method (only available in Class components) so if the component is anything more complicated than a collection of commonly grouped html elements, it should be a Class component.
 
 ### API Naming Convention
 
@@ -217,27 +217,27 @@ request name = "login"
 response handler = "loginResponse"
 error handler = "loginError"
 ```
-By using this standard we can take something repetitive like setting up callbacks for the super-agent AJAX libraries response handlers and dictate a single method which calls the relevant handler based on the request name and response type, ie:
+By using this standard we can take something repetitive like setting up callbacks for the [Super-Agent](https://visionmedia.github.io/superagent/) AJAX library's response handlers and dictate a single method which calls the relevant handler based on the request name and response type, ie:
 
 *client/js/api/apiInterface.js*
 ```javascript
 let handler = apiResponses[requestName+"Response"];
 ```
 
-... where ``apiResponses`` is an object with response handlers for its properties.
+... where ``apiResponses`` is an object we define with response handlers for its properties.
 
 -----
 
 ## Priorities
 
-While there is always space for more optimisation in some form or another, at some point we need to draw a line in the sand past which debate takes up more energy than its worth. Optimisation is still fun and interesting, though, so I've outlined two main priorities for this project which I've found present some interesting challenges
+While there is always space for more optimisation in some form or another, at some point we need to draw a line in the sand past which debate takes up more energy than it's worth. Optimisation is still fun and interesting, though, so I've outlined two main priorities for this project which I've found present some interesting challenges...
 
 ### Size Matters
 
 This applies to both JavaScript and CSS, primarily for FE code. Short of just removing established libraries in this project, if you can find ways to reduce the final build.min.js by even 1kb we consider that a victory. Some examples
 
 - Libraries like React have a production build the simplifies error tracking and logging, reducing the build size
-- Don't import an entire utility library just to use one or two methods from it. Lodash is a good exmaple of a library that let's you only import the code you need
+- Don't import an entire utility library just to use one or two methods from it. Lodash is a good example of a library that let's you only import the code you need
 - Minify, obfuscate, uglify, compress! All these things are a step closer to a smaller build
 
 ### Minimal Renders
