@@ -113,10 +113,10 @@ For FE code there is a folder of wireframe files which you can copy/paste from w
 
 - JavaScript files are named in ``camelCase`` with the exception of React components which are named in ``PascalCase``
 
- -- Action creators are named after the thing the action is primarily affecting
- -- Top level components are named after the page they represent
- -- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom")
- -- Reducers are named after the thing they represent data for
+-- Action creators are named after the thing the action is primarily affecting 
+-- Top level components are named after the page they represent 
+-- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom") 
+-- Reducers are named after the thing they represent data for 
 
 - CSS files are named in ``kebab-case`` and, like the component folders, are named either after the shared function of the components they apply to or the page the styles are specific to
 
