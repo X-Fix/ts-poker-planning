@@ -45,7 +45,7 @@ Welcome to the project, hope you enjoy your stay. The guidelines below will deta
 
 ## What should I know before I get started?
 
-The following section gives a brief explanation of how each library fits into the project as well as links to starting resources. You don't need to be familiar with all the libraries in order to contribute but it is recommended you familiarise yourself with those relevant to whichever part of the project you want to get involved with.
+The following section gives a brief explanation of how each library fits into the project as well as links to starting resources. You don't need to be familiar with all the libraries in order to contribute but it is recommended you familiarise yourself with those relevant to whichever part of the project you want to get involved with. [These issues](https://github.com/X-Fix/ts-poker-planning/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) marked with ``good first issue`` are also a good place to start as they offer a practical look at how these libraries are used
 
 The libraries can be split into 3 sections: front-end (FE), back-end (BE), and testing
 
@@ -85,15 +85,15 @@ We don't enforce unit testing for each feature just yet but it's good to underst
 
 ## Where to Start
 
-Assuming you have a good understanding of the relevant libraries and frameworks, the next question is where to go to start contributing
+Assuming you have a basic understanding of the relevant libraries and frameworks, the next question is where to get started contributing
 
 ### This Document
 
-Before really digging you in should at least skim over the rest of this document so you know how to follow the style guides, understand and follow the design decisions, and align yourself with the general priorities
+While digging in I suggest keeping this document close by so you have a reference for following the style guides and understanding the design decisions.
 
 ### Existing Issues
 
-Once you're comfortable with everything contained in this document you can start looking into the [existing issues](https://github.com/X-Fix/ts-poker-planning/issues) for anything you feel like tackling, especially those with a ``help wanted`` tag, or a ``good first issue`` tag if you're a newcomer to contributing to this repository
+Once you're comfortable with what's contained in this document you can start looking into the [existing issues](https://github.com/X-Fix/ts-poker-planning/issues) for anything you feel like tackling, especially those with a ``help wanted`` tag, or a ``good first issue`` tag if you're a newcomer to contributing to this repository
 
 ### Your Ideas
 
@@ -113,10 +113,10 @@ For FE code there is a folder of wireframe files which you can copy/paste from w
 
 - JavaScript files are named in ``camelCase`` with the exception of React components which are named in ``PascalCase``
 
--- Action creators are named after the thing the action is primarily affecting
--- Top level components are named after the page they represent
--- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom")
--- Reducers are named after the thing they represent data for
+ -- Action creators are named after the thing the action is primarily affecting
+ -- Top level components are named after the page they represent
+ -- Child components are grouped on folders either by function (eg. modals) or by the top level component they appear in (eg. "pokerRoom")
+ -- Reducers are named after the thing they represent data for
 
 - CSS files are named in ``kebab-case`` and, like the component folders, are named either after the shared function of the components they apply to or the page the styles are specific to
 
