@@ -1,7 +1,7 @@
-import { find, isEmpty } from 'lodash';
 import { store } from '../reducers';
 import { roomActions } from '../actionCreators';
 import { getStorageItem, setStorageItem } from '../utilities/helperMethods';
+import { find, isEmpty } from '../utilities/lodash';
 
 function identifyForFullstory(room, participant) {
 	if (!window.FS) return;

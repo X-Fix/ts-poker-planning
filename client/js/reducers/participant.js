@@ -1,4 +1,4 @@
-import { assign, isEqual } from 'lodash';
+import { assign, isEqual } from '../utilities/lodash';
 
 const init = {};
 

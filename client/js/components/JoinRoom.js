@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, keys, map } from 'lodash';
 import { apiRequests } from '../api';
 import { CARDS } from '../utilities/constants';
+import { isEmpty, keys, map } from '../utilities/lodash';
 import { getQueryParam } from '../utilities/helperMethods';
 
 const mapStateToProps = ({ requests }) => {

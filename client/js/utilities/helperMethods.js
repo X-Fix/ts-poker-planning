@@ -1,5 +1,5 @@
-import { forEach, filter, findIndex, isEmpty } from 'lodash';
 import { API_ENDPOINTS } from './constants';
+import { forEach, filter, findIndex, isEmpty } from './lodash';
 
 /**
  * Route Parser

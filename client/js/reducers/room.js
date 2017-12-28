@@ -1,4 +1,4 @@
-import { assign, filter, isEmpty, isEqual, map } from 'lodash';
+import { assign, filter, isEmpty, isEqual, map } from '../utilities/lodash';
 
 const init = {
 	id: null,

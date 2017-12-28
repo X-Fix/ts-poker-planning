@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { find, isEmpty, isEqual, map } from 'lodash';
 import { apiRequests } from '../api';
 import { itemActions, modalActions, participantActions } from '../actionCreators';
 import { CARDS } from '../utilities/constants';
+import { find, isEmpty, isEqual, map } from '../utilities/lodash';
 import { getStorageItem } from '../utilities/helperMethods';
 import { ShareLinkModal } from './modals';
 
