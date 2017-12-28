@@ -13,13 +13,10 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import isEmpty 	from 'lodash/isEmpty';
-import isEqual 	from 'lodash/isEqual';
-
-import { getStorageItem } from '../utilities/helperMethods';
-import { REQUEST_STATES } from '../utilities/constants';
+import { REQUEST_STATES } 	from '../utilities/constants';
+import { getStorageItem } 	from '../utilities/helperMethods';
+import { isEmpty, isEqual } from '../utilities/lodash';
 import { apiRequests } from '../api';
-
 import PokerRoom from './PokerRoom';
 import JoinRoom from './JoinRoom';
 

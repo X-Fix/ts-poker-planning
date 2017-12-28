@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import isEqual 	from 'lodash/isEqual';
+import { isEqual } from '../../utilities/lodash';
 import { modalActions } from '../../actionCreators';
 import ModalWrapper from './ModalWrapper';
 
