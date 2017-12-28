@@ -1,4 +1,7 @@
-import { forEach, filter, findIndex, isEmpty } from 'lodash';
+import forEach 	 from 'lodash/forEach';
+import filter 	 from 'lodash/filter';
+import findIndex from 'lodash/findIndex';
+import isEmpty 	 from 'lodash/isEmpty';
 import { API_ENDPOINTS } from './constants';
 
 /**

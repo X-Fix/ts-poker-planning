@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
+import isEqual 	from 'lodash/isEqual';
 import { actionCreator } from '../actions';
 
 const mapStateToProps = ({ reducerA, reducerB }) => {

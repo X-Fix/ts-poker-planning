@@ -1,4 +1,6 @@
-import { assign, forEach, keys } from 'lodash';
+import assign 	from 'lodash/assign';
+import forEach 	from 'lodash/forEach';
+import keys 	from 'lodash/keys';
 import { API_ENDPOINTS, REQUEST_STATES } from '../utilities/constants';
 
 let init = {};

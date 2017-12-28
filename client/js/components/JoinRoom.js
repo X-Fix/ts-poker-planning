@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, keys, map } from 'lodash';
+import isEmpty 	from 'lodash/isEmpty';
+import keys 	from 'lodash/keys';
+import map 		from 'lodash/map';
 import { apiRequests } from '../api';
 import { CARDS } from '../utilities/constants';
 import { getQueryParam } from '../utilities/helperMethods';

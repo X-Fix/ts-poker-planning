@@ -1,4 +1,5 @@
-import { find, isEmpty } from 'lodash';
+import find 	from 'lodash/find';
+import isEmpty 	from 'lodash/isEmpty';
 import { store } from '../reducers';
 import { roomActions } from '../actionCreators';
 import { getStorageItem, setStorageItem } from '../utilities/helperMethods';
