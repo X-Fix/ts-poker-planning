@@ -84,7 +84,7 @@ describe('PokerRoom page loads and works', () => {
 			for (let i=0;i<3;i++) {
 				cy.get('input[type="text"].item-name').type(data.itemName+i);
 				cy.get('div.btn.create-item').click().then(() => {
-					cy.get('div.participant-panel__header').contains('Current item: ' + data.itemName+i);
+					cy.get('div.participant-panel__header').contains(data.itemName+i);
 					forEach(cardValues, cardValue => {
 						cy.get('div.poker-card').contains(cardValue).should('not.have.class', 'disabled');
 					})
