@@ -19,7 +19,8 @@
     "js-watch": "watchify client/js/app.js --poll -v -t babelify -o public/build.js",
     "nodemon": "nodemon index.js --watch server",
     "heroku": "npm run build-production && git add . && git commit -m 'production build' && git push heroku master",
-    "watch": "concurrently --kill-others \"npm run js-watch\" \"npm run css-watch\" \"npm run html-watch\" \"sleep 5s && npm run nodemon\""
+    "watch": "concurrently --kill-others \"npm run js-watch\" \"npm run css-watch\" \"npm run html-watch\" \"sleep 5s && npm run nodemon\"",
+    "print-b": "NODE_ENV=production browserify public/test.js -t babelify --verbose --debug --poll > public/out.js && echo 'built'"
   },
   "dependencies": {
     "bufferutil": "~3.0.2",
